@@ -16,7 +16,9 @@ def topology():
     c0 = net.addController('c0')
     
     # Add an Access Point (mode 'g' = 802.11g)
-    ap1 = net.addAccessPoint('ap1', ssid='myssid', mode='g', channel='1', position='10,10,0')
+   # 'passwd' must be exactly 5 or 13 characters for WEP
+    ap1 = net.addAccessPoint('ap1', ssid='myssid', mode='g', channel='1', 
+                         encrypt='wep', passwd='12345', position='10,10,0')
     
     # Add a Station (Client)
     sta1 = net.addStation('sta1', position='10,20,0')
