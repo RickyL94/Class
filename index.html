@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0045)file:///C:/Users/Zool/Desktop/Work/index.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Welcome to Night City</title>
+<title>Welcome to System Automation</title>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap');
@@ -83,6 +83,95 @@ body {
     }
 }
 
+/* Ravensbourne logo (animated SVG/HTML, no PNG) */
+.logo {
+    margin-bottom: 40px;
+    display: inline-block;
+    animation: logoAppear 1.2s ease forwards;
+    opacity: 0;
+}
+
+@keyframes logoAppear {
+    to { opacity: 1; }
+}
+
+.logo svg {
+    width: 320px;
+    height: 120px;
+}
+
+/* Icon parts */
+.logo .square {
+    fill: none;
+    stroke: #fcee09;
+    stroke-width: 2;
+    stroke-dasharray: 320;
+    stroke-dashoffset: 320;
+    animation: drawSquare 1.5s ease forwards;
+}
+
+@keyframes drawSquare {
+    to { stroke-dashoffset: 0; }
+}
+
+.logo .diagonal {
+    fill: none;
+    stroke: #00f0ff;
+    stroke-width: 2;
+    stroke-dasharray: 120;
+    stroke-dashoffset: 120;
+    animation: drawDiagonal 1.2s ease forwards 1.5s;
+}
+
+@keyframes drawDiagonal {
+    to { stroke-dashoffset: 0; }
+}
+
+.logo .circle {
+    fill: #888;
+    animation: pulse 2s infinite alternate;
+}
+
+.logo .c1 { animation-delay: 0s; }
+.logo .c2 { animation-delay: 0.3s; }
+.logo .c3 { animation-delay: 0.6s; }
+
+@keyframes pulse {
+    0% { r: 1; opacity: 0.4; }
+    50% { r: 2.4; opacity: 1; }
+    100% { r: 1; opacity: 0.4; }
+}
+
+/* Text within logo */
+.logo text {
+    font-family: 'Orbitron', sans-serif;
+}
+
+.logo .text-main {
+    font-weight: 900;
+    font-size: 26px;
+    fill: #fcee09;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    animation: textFade 1s ease forwards 1.8s;
+    opacity: 0;
+}
+
+.logo .text-sub {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    fill: #00f0ff;
+    letter-spacing: 1px;
+    animation: textFade 1s ease forwards 2.2s;
+    opacity: 0;
+}
+
+@keyframes textFade {
+    to { opacity: 1; }
+}
+
+/* Subtitle */
 .subtitle {
     color: #00f0ff;
     letter-spacing: 12px;
@@ -92,6 +181,7 @@ body {
     animation: flicker 3s infinite;
 }
 
+/* h1 */
 h1 {
     font-family: 'Orbitron', sans-serif;
     font-size: clamp(55px, 12vw, 130px);
@@ -126,6 +216,7 @@ h1 {
     20%, 22%, 81% { opacity: .3; }
 }
 
+/* Description */
 .description {
     margin-top: 35px;
     color: #ccc;
@@ -134,6 +225,7 @@ h1 {
     text-transform: uppercase;
 }
 
+/* Line */
 .line {
     height: 2px;
     width: 0;
@@ -147,27 +239,7 @@ h1 {
     to { width: 250px; }
 }
 
-.button {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 14px 45px;
-    border: 2px solid #fcee09;
-    color: #fcee09;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 13px;
-    letter-spacing: 3px;
-    text-decoration: none;
-    transition: .3s;
-    cursor: pointer;
-    background: transparent;
-}
-
-.button:hover {
-    background: #fcee09;
-    color: #08090d;
-    box-shadow: 0 0 30px #fcee09;
-}
-
+/* Footer */
 .footer {
     position: absolute;
     bottom: 30px;
@@ -195,38 +267,36 @@ h1 {
 <div class="scanlines"></div>
 
 <div class="container">
-    <div class="subtitle">Night City // 2077</div>
+    <!-- Ravensbourne logo as animated HTML/SVG (no PNG) -->
+    <div class="logo">
+        <svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+            <g class="icon" transform="translate(20, 20)">
+                <rect class="square" x="0" y="0" width="80" height="80"></rect>
+                <line class="diagonal" x1="0" y1="0" x2="80" y2="80"></line>
+                <circle class="circle c1" cx="20" cy="20" r="6"></circle>
+                <circle class="circle c2" cx="50" cy="40" r="10"></circle>
+                <circle class="circle c3" cx="35" cy="60" r="4"></circle>
+            </g>
+            <text class="text-main" x="115" y="55">RAVENSBOURNE</text>
+            <text class="text-sub" x="115" y="82">University London</text>
+        </svg>
+    </div>
+
+    
 
     <h1>WELCOME</h1>
 
     <div class="line"></div>
 
+    
+
     <div class="description">
-        Wake up, Samurai.
+        Level 4, Week 7 - Week 12
+    </div><div class="footer">
+        CYBER SECURITY // BUSINESS COMPUTING // 2026
     </div>
-
-    <button class="button" onclick="enterCity()">
-        ENTER NIGHT CITY
-    </button>
 </div>
 
-<div class="footer">
-    SYSTEM ONLINE // ARASAKA NETWORK // 2077
-</div>
 
-<script>
-function enterCity() {
-    document.body.style.transition = "filter 1s, opacity 1s";
-    document.body.style.filter = "brightness(3)";
-    document.body.style.opacity = "0";
 
-    setTimeout(() => {
-        document.body.style.filter = "none";
-        document.body.style.opacity = "1";
-        alert("WELCOME TO NIGHT CITY, SAMURAI.");
-    }, 1000);
-}
-</script>
-
-</body>
-</html>
+</body></html>
