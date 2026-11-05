@@ -71,6 +71,57 @@ h1 {
   transform: rotate(-8deg);
 }
 main { padding: 32px 0 72px; }
+.module-overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(270px, .65fr);
+  gap: clamp(28px, 5vw, 72px);
+  padding: 8px 0 40px;
+  margin-bottom: 34px;
+  border-bottom: 1px solid var(--rule);
+}
+.section-label {
+  margin: 0 0 14px;
+  color: var(--rust);
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  font-size: 11px;
+  font-weight: 700;
+}
+.overview-copy p {
+  max-width: 690px;
+  margin: 0 0 14px;
+  color: #46554b;
+  font: 16px/1.7 var(--serif);
+}
+.overview-copy p:last-child { margin-bottom: 0; }
+.aim-panel {
+  align-self: start;
+  padding: 20px 0 0 22px;
+  border-left: 1px solid var(--green);
+}
+.aim-panel h2 {
+  margin: 0 0 14px;
+  color: var(--green);
+  font: 500 25px/1.15 var(--serif);
+}
+.aim-panel ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.aim-panel li {
+  position: relative;
+  margin: 0 0 13px;
+  padding-left: 18px;
+  color: #46554b;
+  font: 14px/1.55 var(--sans);
+}
+.aim-panel li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--rust);
+}
 .roadmap-label {
   display: flex;
   align-items: baseline;
@@ -154,6 +205,8 @@ footer {
 @media (max-width: 650px) {
   .page { width: min(100% - 32px, 1120px); }
   header { padding: 38px 0 26px; grid-template-columns: 1fr; }
+  .module-overview { grid-template-columns: 1fr; gap: 28px; padding-bottom: 30px; }
+  .aim-panel { padding: 0 0 0 18px; }
   .header-mark { display: none; }
   .intro { font-size: 16px; }
   .week summary { grid-template-columns: 62px minmax(0, 1fr) 40px; gap: 10px; min-height: 82px; }
@@ -176,6 +229,24 @@ footer {
     </div>
   </header>
   <main>
+    <section class="module-overview" aria-label="Module overview">
+      <div class="overview-copy">
+        <p class="section-label">Module Descriptor</p>
+        <p>This module introduces system automation as a practical approach to improving simple organisational tasks, reducing repetitive manual work and supporting reliable digital processes in business environments. It introduces students to fundamental automation concepts, such as task analysis, basic process mapping, scripting, version control, testing, debugging, documentation and communication of automated solutions.</p>
+        <p>The module draws on introductory ideas from Business Information Systems by challenging students to consider how organisations use information, processes and digital tools to complete routine work. Students are expected to apply these ideas through hands-on automation activities using available scripting, data handling and documentation tools. Students will learn how to design and build simple automated solutions that respond to defined organisational needs, such as automated file handling, data preparation, validation and reporting. The learning in this module emphasises clear problem definition, basic requirements, repeatable development practice, error handling, testing, version-controlled artefacts and accessible explanation for technical and non-technical audiences.</p>
+        <p>This module also introduces data-handling patterns, such as structured files, tabular data, validation and simple transformation, preparing students for Databases in Trimester 2. It provides a foundation for later study in Business System Automation, Business Analytics, Cloud-Based Systems and Information System Automation.</p>
+      </div>
+      <aside class="aim-panel">
+        <p class="section-label">Module Aim</p>
+        <h2>This module aims to:</h2>
+        <ul>
+          <li>Develop an understanding of system automation and its role in improving organisational tasks, business processes and information handling.</li>
+          <li>Introduce basic process analysis, task decomposition, requirements capture and workflow thinking as foundations for designing useful automation solutions.</li>
+          <li>Develop practical skills in scripting, data handling, version control, testing, debugging and documentation using available tools and platforms.</li>
+          <li>Build professional habits of reliability, traceability, error handling, basic security awareness, user-focused documentation and clear communication of technical work to mixed audiences.</li>
+        </ul>
+      </aside>
+    </section>
     <div class="roadmap-label"><span>Six-week programme</span><span>Select a week to expand</span></div>
     <div class="week-list">
       <details class="week" id="week-1">
