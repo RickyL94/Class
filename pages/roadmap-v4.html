@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f4f1e9">
+<title>System Automation — Six-week learning roadmap</title>
+<style>
+:root {
+  color-scheme: light;
+  --paper: #f8f7f8;
+  --paper-deep: #efeeee;
+  --ink: #000000;
+  --muted: #555258;
+  --green: #000000;
+  --green-soft: #ecebed;
+  --rust: #755900;
+  --yellow: #fdc300;
+  --rule: #d7d5d8;
+  --serif: Arial, Helvetica, sans-serif;
+  --sans: Arial, Helvetica, sans-serif;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+}
+.topline { height: 10px; background: var(--ink); border-bottom: 4px solid var(--yellow); }
+.page { width: min(1120px, calc(100% - 48px)); margin: 0 auto; }
+header {
+  padding: 54px 0 34px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 24px;
+  border-bottom: 1px solid var(--rule);
+}
+.eyebrow {
+  margin: 0 0 15px;
+  color: var(--rust);
+  text-transform: uppercase;
+  letter-spacing: .18em;
+  font-size: 11px;
+  font-weight: 700;
+}
+h1 {
+  max-width: 720px;
+  margin: 0;
+  font: 500 clamp(38px, 6vw, 72px)/.98 var(--serif);
+  letter-spacing: -.045em;
+  text-wrap: balance;
+}
+.intro {
+  max-width: 590px;
+  margin: 20px 0 0;
+  color: var(--muted);
+  font: 17px/1.6 var(--serif);
+}
+.header-mark {
+  width: 104px;
+  height: 104px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--green);
+  border-radius: 50%;
+  color: var(--green);
+  font: 500 25px/1 var(--serif);
+  transform: rotate(-8deg);
+}
+main { padding: 32px 0 72px; }
+.module-overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(270px, .65fr);
+  gap: clamp(28px, 5vw, 72px);
+  padding: 8px 0 40px;
+  margin-bottom: 34px;
+  border-bottom: 1px solid var(--rule);
+}
+.section-label {
+  margin: 0 0 14px;
+  color: var(--rust);
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  font-size: 11px;
+  font-weight: 700;
+}
+.overview-copy p {
+  max-width: 690px;
+  margin: 0 0 14px;
+  color: #46554b;
+  font: 16px/1.7 var(--serif);
+}
+.overview-copy p:last-child { margin-bottom: 0; }
+.aim-panel {
+  align-self: start;
+  padding: 20px 0 0 22px;
+  border-left: 1px solid var(--green);
+}
+.aim-panel h2 {
+  margin: 0 0 14px;
+  color: var(--green);
+  font: 500 25px/1.15 var(--serif);
+}
+.aim-panel ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.aim-panel li {
+  position: relative;
+  margin: 0 0 13px;
+  padding-left: 18px;
+  color: #46554b;
+  font: 14px/1.55 var(--sans);
+}
+.aim-panel li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--rust);
+}
+.roadmap-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-size: 11px;
+  font-weight: 700;
+}
+.week-list { border-top: 2px solid var(--yellow); }
+details.week {
+  border-bottom: 1px solid var(--rule);
+  scroll-margin-top: 18px;
+}
+.week summary {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr) 48px;
+  align-items: center;
+  gap: 18px;
+  min-height: 94px;
+  padding: 18px 8px;
+  cursor: pointer;
+}
+.week summary::-webkit-details-marker { display: none; }
+.week summary:focus-visible { outline: 2px solid var(--rust); outline-offset: 3px; }
+.week-index {
+  color: var(--rust);
+  font: 700 12px/1 var(--sans);
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+.week-title {
+  font: 500 clamp(19px, 2.8vw, 27px)/1.2 var(--serif);
+  letter-spacing: -.02em;
+}
+.expand-label {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--green);
+  border-radius: 50%;
+  color: var(--green);
+  font: 22px/1 var(--sans);
+  transition: background .2s ease, color .2s ease, transform .25s ease;
+}
+.week summary:hover { background: #fff6d5; }
+.week summary:hover .expand-label { border-color: var(--yellow); background: var(--yellow); color: var(--ink); }
+.week[open] .expand-label { border-color: var(--yellow); background: var(--yellow); color: var(--ink); transform: rotate(45deg); }
+.week-content {
+  max-width: 790px;
+  padding: 0 62px 30px 108px;
+  color: #46554b;
+  font: 16px/1.7 var(--serif);
+  animation: reveal .25s ease both;
+}
+.week-content p { margin: 0 0 13px; }
+.week-content p:last-child { margin-bottom: 0; }
+.week-content strong {
+  color: var(--green);
+  font: 700 11px/1.5 var(--sans);
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.welcome-screen {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 28px 28px 84px;
+  background: var(--paper);
+}
+.welcome-inner {
+  width: min(100%, 1120px);
+  text-align: center;
+}
+.welcome-logo { margin: 0 0 clamp(28px, 5vh, 54px); }
+.welcome-logo svg { width: min(400px, 88vw); height: auto; }
+.welcome-logo .mark-square { fill: none; stroke: var(--green); stroke-width: 2; stroke-dasharray: 320; stroke-dashoffset: 320; animation: logo-draw 1.2s ease forwards; }
+.welcome-logo .mark-diagonal { stroke: var(--yellow); stroke-width: 2; stroke-dasharray: 120; stroke-dashoffset: 120; animation: logo-draw 1s ease 1s forwards; }
+.welcome-logo .mark-dot { fill: #7f8b7f; animation: dot-arrive .7s ease both; }
+.welcome-logo .mark-dot:nth-of-type(3) { animation-delay: .25s; }
+.welcome-logo .mark-dot:nth-of-type(4) { animation-delay: .5s; }
+.welcome-logo .brand-name { fill: var(--ink); font: 900 26px var(--sans); letter-spacing: 2px; opacity: 0; animation: text-arrive .7s ease 1.4s forwards; }
+.welcome-logo .brand-sub { fill: var(--muted); font: 400 16px var(--sans); letter-spacing: 1px; opacity: 0; animation: text-arrive .7s ease 1.8s forwards; }
+@keyframes logo-draw { to { stroke-dashoffset: 0; } }
+@keyframes dot-arrive { from { opacity: 0; transform: scale(.2); } to { opacity: 1; transform: scale(1); } }
+@keyframes text-arrive { to { opacity: 1; } }
+.welcome-title {
+  max-width: 1000px;
+  margin: 0 auto;
+  color: var(--ink);
+  font: 500 clamp(48px, 9vw, 112px)/1.03 var(--serif);
+  letter-spacing: -.045em;
+  text-wrap: balance;
+}
+.welcome-rule { width: min(280px, 52vw); height: 3px; margin: clamp(28px, 5vh, 46px) auto; background: var(--yellow); }
+.welcome-meta { margin: 0; color: var(--muted); font: 600 clamp(19px, 2.6vw, 27px)/1.3 var(--serif); }
+.welcome-footer { position: absolute; left: 0; right: 0; bottom: 30px; color: var(--muted); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; text-align: center; }
+footer {
+  padding: 18px 0 28px;
+  border-top: 1px solid var(--rule);
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+@media (max-width: 650px) {
+  .page { width: min(100% - 32px, 1120px); }
+  header { padding: 38px 0 26px; grid-template-columns: 1fr; }
+  .module-overview { grid-template-columns: 1fr; gap: 28px; padding-bottom: 30px; }
+  .aim-panel { padding: 0 0 0 18px; }
+  .header-mark { display: none; }
+  .intro { font-size: 16px; }
+  .week summary { grid-template-columns: 62px minmax(0, 1fr) 40px; gap: 10px; min-height: 82px; }
+  .expand-label { width: 34px; height: 34px; }
+  .week-content { padding: 0 12px 24px 72px; font-size: 15px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+</style>
+</head>
+<body>
+<section class="welcome-screen" id="welcomeScreen" aria-label="Welcome to System Automation">
+  <div class="welcome-inner">
+    <div class="welcome-logo" aria-label="Ravensbourne University London">
+      <svg viewBox="0 0 400 120" role="img" aria-labelledby="brandTitle brandDescription" xmlns="http://www.w3.org/2000/svg">
+        <title id="brandTitle">Ravensbourne University London</title>
+        <desc id="brandDescription">Animated geometric Ravensbourne logo</desc>
+        <g transform="translate(20,20)">
+          <rect class="mark-square" x="0" y="0" width="80" height="80" />
+          <line class="mark-diagonal" x1="0" y1="0" x2="80" y2="80" />
+          <circle class="mark-dot" cx="20" cy="20" r="6" />
+          <circle class="mark-dot" cx="50" cy="40" r="10" />
+          <circle class="mark-dot" cx="35" cy="60" r="4" />
+        </g>
+        <text class="brand-name" x="115" y="55">RAVENSBOURNE</text>
+        <text class="brand-sub" x="115" y="82">University London</text>
+      </svg>
+    </div>
+    <h1 class="welcome-title">WELCOME TO SYSTEM AUTOMATION</h1>
+    <div class="welcome-rule"></div>
+    <p class="welcome-meta">Level 4 · Weeks 7–12</p>
+  </div>
+  <div class="welcome-footer">Cyber Security · Business Computing · 2026</div>
+</section>
+<div class="page" id="roadmapContent">
+  <header>
+    <div>
+      <p class="eyebrow">System Automation · Learning roadmap</p>
+      <h1>From routine tasks to reliable automation.</h1>
+      <p class="intro">A six-week path through process analysis, scripting, data handling, development practice, testing and professional communication. Expand a week to explore its learning focus.</p>
+    </div>
+  </header>
+  <main>
+    <section class="module-overview" aria-label="Module overview">
+      <div class="overview-copy">
+        <p class="section-label">Module Descriptor</p>
+        <p>This module introduces system automation as a practical approach to improving simple organisational tasks, reducing repetitive manual work and supporting reliable digital processes in business environments. It introduces students to fundamental automation concepts, such as task analysis, basic process mapping, scripting, version control, testing, debugging, documentation and communication of automated solutions.</p>
+        <p>The module draws on introductory ideas from Business Information Systems by challenging students to consider how organisations use information, processes and digital tools to complete routine work. Students are expected to apply these ideas through hands-on automation activities using available scripting, data handling and documentation tools. Students will learn how to design and build simple automated solutions that respond to defined organisational needs, such as automated file handling, data preparation, validation and reporting. The learning in this module emphasises clear problem definition, basic requirements, repeatable development practice, error handling, testing, version-controlled artefacts and accessible explanation for technical and non-technical audiences.</p>
+        <p>This module also introduces data-handling patterns, such as structured files, tabular data, validation and simple transformation, preparing students for Databases in Trimester 2. It provides a foundation for later study in Business System Automation, Business Analytics, Cloud-Based Systems and Information System Automation.</p>
+      </div>
+      <aside class="aim-panel">
+        <p class="section-label">Module Aim</p>
+        <h2>This module aims to:</h2>
+        <ul>
+          <li>Develop an understanding of system automation and its role in improving organisational tasks, business processes and information handling.</li>
+          <li>Introduce basic process analysis, task decomposition, requirements capture and workflow thinking as foundations for designing useful automation solutions.</li>
+          <li>Develop practical skills in scripting, data handling, version control, testing, debugging and documentation using available tools and platforms.</li>
+          <li>Build professional habits of reliability, traceability, error handling, basic security awareness, user-focused documentation and clear communication of technical work to mixed audiences.</li>
+        </ul>
+      </aside>
+    </section>
+    <div class="roadmap-label"><span>Six-week programme</span><span>Select a week to expand</span></div>
+    <div class="week-list">
+      <details class="week" id="week-1">
+        <summary><span class="week-index">Week 01</span><span class="week-title">Automation in Organisations and Process Analysis</span><span class="expand-label" aria-hidden="true">+</span></summary>
+        <div class="week-content">
+          <p><strong>Focus</strong><br>The role of automation in organisational information systems, operational efficiency and routine business activity.</p>
+          <p>Identifying suitable automation opportunities in simple organisational tasks and small business processes.</p>
+          <p>Basic process mapping and workflow representation using process mapping tools, version control platforms and low-code automation platforms.</p>
+          <p>Introductory requirements capture, including problem statements, inputs, outputs, assumptions, constraints and acceptance criteria.</p>
+        </div>
+      </details>
+      <details class="week" id="week-2">
+        <summary><span class="week-index">Week 02</span><span class="week-title">Scripting Fundamentals for Automation</span><span class="expand-label" aria-hidden="true">+</span></summary>
+        <div class="week-content">
+          <p><strong>Focus</strong><br>Scripting fundamentals using scripting languages and integrated development environments.</p>
+          <p>Core programming concepts for automation, including variables, data types, control structures and functions.</p>
+          <p>Introduce file handling and structured data concepts.</p>
+        </div>
+      </details>
+      <details class="week" id="week-3">
+        <summary><span class="week-index">Week 03</span><span class="week-title">Data Handling and Task Automation</span><span class="expand-label" aria-hidden="true">+</span></summary>
+        <div class="week-content">
+          <p><strong>Focus</strong><br>Core programming concepts for automation, including basic validation, error handling and logging. Designing automation solutions that are understandable, maintainable and reusable.</p>
+          <p>Automating repetitive operational tasks, such as file organisation, data cleaning, data validation, simple report generation and routine information-processing activities.</p>
+          <p>Apply structured data formats such as CSV and JSON for simple automation inputs and outputs.</p>
+          <p>Basic data-handling patterns using structured files handling, tabular data, Excel-style data and simple transformations as preparation for Databases.</p>
+        </div>
+      </details>
+      <details class="week" id="week-4">
+        <summary><span class="week-index">Week 04</span><span class="week-title">Version Control and Development Practices</span><span class="expand-label" aria-hidden="true">+</span></summary>
+        <div class="week-content">
+          <p><strong>Focus</strong><br>Version control fundamentals using repository platforms, including repositories, commits, branches, history tracking and simple collaboration workflows.</p>
+          <p>Introductory repeatable-delivery practices, including naming conventions, folder structures, simple automated checks and reproducible execution of automation artefacts.</p>
+          <p>Documentation standards for automation artefacts, including README entries, code comments, user instructions, simple runbooks and technical notes for future maintenance.</p>
+        </div>
+      </details>
+      <details class="week" id="week-5">
+        <summary><span class="week-index">Week 05</span><span class="week-title">Testing, Debugging and Security</span><span class="expand-label" aria-hidden="true">+</span></summary>
+        <div class="week-content">
+          <p><strong>Focus</strong><br>Testing and debugging automation solutions, including functional testing, invalid input testing, exception handling and recording test evidence.</p>
+          <p>Basic security, privacy and professional issues in automation, including sensitive data, credentials, access control, accidental data loss and the limits of automation.</p>
+        </div>
+      </details>
+      <details class="week" id="week-6">
+        <summary><span class="week-index">Week 06</span><span class="week-title">Professional Practice and Communication</span><span class="expand-label" aria-hidden="true">+</span></summary>
+        <div class="week-content">
+          <p><strong>Focus</strong><br>Communicating automation purpose, operation, limitations and business value to technical and non-technical stakeholders.</p>
+          <p>Evaluating automation solutions against organisational requirements and business needs.</p>
+          <p>Consolidation and refinement of automation artefacts, documentation and assessment evidence.</p>
+          <p>Introductory demonstration of low-code automation platforms, such as Microsoft Power Automate, to illustrate alternative approaches to workflow automation and support awareness of contemporary industry practice.</p>
+        </div>
+      </details>
+    </div>
+  </main>
+  <footer>System Automation · Six-week learning roadmap</footer>
+</div>
+<script>
+// Keep the roadmap focused: opening one week closes the others.
+document.querySelectorAll('details.week').forEach((current) => {
+  current.addEventListener('toggle', () => {
+    if (!current.open) return;
+    document.querySelectorAll('details.week[open]').forEach((other) => {
+      if (other !== current) other.open = false;
+    });
+  });
+});
+</script>
+</body>
+</html>
