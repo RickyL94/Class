@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<!-- saved from url=(0137)file:///C:/Users/Zool/AppData/Local/hermes/profiles/school-work/attachments/Federated-Learning-Cybersecurity-Privacy-Level4-v2-3.html#s18 -->
+<html lang="en-GB" class="js"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="19-slide Level 4 deck on federated learning with an animated training loop, an attack-surface animation, and six final-check question checkpoints.">
+<title>Federated Learning for Cybersecurity &amp; Privacy — Level 4 (Interactive V3)</title>
+<style>
+  :root {
+    --bg:          #fbfbfd;
+    --surface:     #ffffff;
+    --surface-2:   #f5f5f7;
+    --ink:         #1d1d1f;
+    --ink-2:       #3a3a3c;
+    --ink-3:       #6e6e73;
+    --hairline:    rgba(0,0,0,0.08);
+    --hairline-2:  rgba(0,0,0,0.16);
+    --accent:      #e37400;
+    --accent-tint: rgba(227,116,0,0.10);
+    --ok:          #1f8a4c;  --ok-tint:  rgba(31,138,76,0.10);
+    --danger:      #d70015;  --danger-tint: rgba(215,0,21,0.08);
+    --net:         #0066cc;  --net-tint:  rgba(0,102,204,0.08);
+    --toolbar-bg:  rgba(251,251,253,0.78);
+    --toolbar-edge: rgba(0,0,0,0.06);
+    --shadow-soft: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.05);
+    --shadow-lift: 0 2px 4px rgba(0,0,0,0.05), 0 10px 30px rgba(0,0,0,0.09);
+    --radius:      18px;
+    --radius-s:    12px;
+    --ease:        cubic-bezier(0.2, 0, 0, 1);
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    --font-mono: ui-monospace, "SF Mono", Consolas, monospace;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+
+  /* ---------- toolbar ---------- */
+  .toolbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; align-items: center; gap: 16px;
+    padding: 12px 22px 11px;
+    background: var(--toolbar-bg);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s var(--ease);
+  }
+  .toolbar-brand {
+    font-size: 13px; font-weight: 600; letter-spacing: 0.01em;
+    color: var(--ink); white-space: nowrap;
+  }
+  .toolbar-brand .tb-sep { color: var(--ink-3); font-weight: 400; margin: 0 4px; }
+  .toolbar-section {
+    flex: 1; text-align: center;
+    font-size: 12.5px; font-weight: 500; letter-spacing: 0.02em;
+    color: var(--ink-3);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .toolbar-count {
+    font-family: var(--font-mono);
+    font-size: 12px; color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .progress {
+    position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 60;
+    background: var(--accent);
+    transform-origin: 0 50%; transform: scaleX(0);
+  }
+
+  /* ---------- deck engine ---------- */
+  .slide { display: block; }
+  .js .slide { display: none; }
+  .js .slide.active {
+    display: flex; min-height: 100vh;
+    align-items: center; overflow-y: auto;
+  }
+  .js .slide.enter { animation: slideIn 520ms var(--ease) both; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .slide-inner {
+    width: 100%; max-width: 1120px;
+    margin: 0 auto;
+    padding: 92px 24px 72px;
+    position: relative;
+  }
+
+  /* ---------- entrance animations (re-trigger on each activation) ---------- */
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes riseLeft {
+    from { opacity: 0; transform: translateX(-10px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .js .slide.active .slide-inner > * { animation: rise 560ms var(--ease) backwards; }
+  .js .slide.active .slide-inner > :nth-child(1) { animation-delay: 0.05s; }
+  .js .slide.active .slide-inner > :nth-child(2) { animation-delay: 0.10s; }
+  .js .slide.active .slide-inner > :nth-child(3) { animation-delay: 0.15s; }
+  .js .slide.active .slide-inner > :nth-child(4) { animation-delay: 0.20s; }
+  .js .slide.active .slide-inner > :nth-child(5) { animation-delay: 0.26s; }
+  .js .slide.active .slide-inner > :nth-child(6) { animation-delay: 0.32s; }
+  .js .slide.active .slide-inner > :nth-child(7) { animation-delay: 0.38s; }
+  .js .slide.active .slide-inner > :nth-child(8) { animation-delay: 0.44s; }
+  .js .slide.active .slide-inner > :nth-child(9) { animation-delay: 0.50s; }
+  .js .slide.active .slide-inner > :nth-child(10) { animation-delay: 0.56s; }
+  .js .slide.active .slide-inner > :nth-child(11) { animation-delay: 0.62s; }
+  .js .slide.active .slide-inner > :nth-child(12) { animation-delay: 0.68s; }
+  .js .slide.active .grid > *   { animation: rise 520ms var(--ease) backwards; }
+  .js .slide.active .grid > :nth-child(1) { animation-delay: 0.30s; }
+  .js .slide.active .grid > :nth-child(2) { animation-delay: 0.37s; }
+  .js .slide.active .grid > :nth-child(3) { animation-delay: 0.44s; }
+  .js .slide.active .grid > :nth-child(4) { animation-delay: 0.51s; }
+  .js .slide.active .grid > :nth-child(5) { animation-delay: 0.58s; }
+  .js .slide.active .grid > :nth-child(6) { animation-delay: 0.65s; }
+  .js .slide.active .flow > * { animation: riseLeft 460ms var(--ease) backwards; }
+  .js .slide.active .flow > :nth-child(1) { animation-delay: 0.24s; }
+  .js .slide.active .flow > :nth-child(2) { animation-delay: 0.34s; }
+  .js .slide.active .flow > :nth-child(3) { animation-delay: 0.42s; }
+  .js .slide.active .flow > :nth-child(4) { animation-delay: 0.52s; }
+  .js .slide.active .flow > :nth-child(5) { animation-delay: 0.60s; }
+  .js .slide.active .flow > :nth-child(6) { animation-delay: 0.70s; }
+  .js .slide.active .flow > :nth-child(7) { animation-delay: 0.78s; }
+  .js .slide.active .flow > :nth-child(8) { animation-delay: 0.88s; }
+  .js .slide.active .flow > :nth-child(9) { animation-delay: 0.96s; }
+
+  /* ---------- slide typography ---------- */
+  .kicker {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .slide h2 {
+    font-size: clamp(26px, 3.4vw, 38px);
+    font-weight: 700; letter-spacing: -0.02em; line-height: 1.12;
+    margin-bottom: 8px; max-width: 1050px;
+  }
+  .lead {
+    font-size: 16.5px; color: var(--ink-2);
+    margin: 12px 0 16px; max-width: 950px;
+  }
+  .slide-title h1 {
+    font-size: clamp(44px, 7.5vw, 84px);
+    font-weight: 700; letter-spacing: -0.03em; line-height: 1.02;
+    margin-bottom: 16px; max-width: 1000px;
+  }
+  .slide-title .lead { font-size: clamp(17px, 2vw, 21px); }
+  .accent { color: var(--accent); }
+
+  /* ---------- components ---------- */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-soft);
+    min-width: 0;
+    transition: transform 0.18s var(--ease), box-shadow 0.18s var(--ease);
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift); }
+  .card h3 {
+    font-size: 16px; font-weight: 600; letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+  .card h3.pink { color: var(--danger); }
+  .card p { font-size: 14px; color: var(--ink-2); margin: 4px 0 0; }
+  .card .tag {
+    display: inline-block; font-size: 10.5px; font-weight: 700;
+    letter-spacing: 0.09em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 7px;
+  }
+  .card p.pink { color: var(--danger); }
+  .card p.lime { color: var(--ok); }
+  .card ul { margin: 6px 0 0 18px; color: var(--ink-2); font-size: 13.5px; }
+  .card li { margin: 5px 0; }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
+  .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .metric {
+    font-size: 30px; font-weight: 800; color: var(--accent);
+    letter-spacing: -0.04em; margin-bottom: 4px;
+  }
+  .bigline { font-size: clamp(17px, 2vw, 22px); line-height: 1.4; color: var(--ink-2); max-width: 1000px; margin: 14px 0; }
+  .small { font-size: 13px; color: var(--ink-3); margin-top: 14px; max-width: 950px; }
+
+  .flow { display: flex; align-items: stretch; gap: 10px; margin: 18px 0; flex-wrap: wrap; }
+  .node {
+    flex: 1 1 150px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-s);
+    padding: 14px 16px; text-align: center;
+    box-shadow: var(--shadow-soft);
+    min-width: 0;
+    transition: transform 0.18s var(--ease), box-shadow 0.18s var(--ease);
+  }
+  .node:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift); }
+  .node strong { display: block; font-size: 13.5px; color: var(--accent); margin-bottom: 4px; letter-spacing: 0.01em; }
+  .node span { font-size: 12.5px; color: var(--ink-3); display: block; }
+  .arrow { align-self: center; color: var(--accent); font-size: 18px; font-weight: 700; position: relative; }
+  .arrow .pkt {
+    position: absolute; top: 50%; left: 0;
+    width: 7px; height: 7px; margin-top: -3.5px;
+    border-radius: 50%; background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    opacity: 0;
+  }
+  .js .slide.active .arrow .pkt { animation: travel 1.9s linear infinite; }
+  .js .slide.active .flow .arrow:nth-child(2n) .pkt { animation-delay: 0.55s; }
+  @keyframes travel {
+    0%   { left: 0; opacity: 0; }
+    15%  { opacity: 1; }
+    85%  { opacity: 1; }
+    100% { left: calc(100% - 7px); opacity: 0; }
+  }
+
+  .note {
+    margin-top: 16px; font-size: 14.5px; color: var(--ink-2);
+    background: var(--surface-2);
+    border: 1px solid var(--hairline);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-s);
+    padding: 12px 16px; max-width: 1000px;
+  }
+  .note b { color: var(--ink); }
+  a { color: var(--net); text-decoration: none; border-bottom: 1px solid rgba(0,102,204,0.35); }
+  a:hover { border-bottom-color: var(--net); }
+  ul.sources { margin: 14px 0 0 20px; color: var(--ink-2); font-size: 14.5px; }
+  ul.sources li { margin: 9px 0; }
+
+  /* ---------- animated SVG figures ---------- */
+  figure.fig { margin: 18px 0 4px; }
+  figure.fig svg { width: 100%; max-width: 1060px; height: auto; display: block; }
+  figure.fig figcaption {
+    margin-top: 10px; font-size: 13px; color: var(--ink-3); max-width: 1000px;
+  }
+  figure.fig figcaption b { color: var(--ink-2); }
+  .figtext { font: 600 12px var(--font); fill: var(--ink); letter-spacing: 0.01em; }
+  .figtext.sm { font-size: 10.5px; font-weight: 500; fill: var(--ink-3); letter-spacing: 0; }
+  .figtext.warn { fill: var(--danger); }
+  .figbox { fill: var(--surface); stroke: var(--hairline-2); stroke-width: 1.2; }
+  .figbox.acc { stroke: var(--accent); stroke-width: 1.6; }
+  .figbox.bad { stroke: var(--danger); stroke-width: 1.6; }
+  .figbox.fill-acc { fill: var(--accent-tint); }
+  .figbox.fill-bad { fill: var(--danger-tint); }
+  .figarrow { stroke: var(--ink-3); stroke-width: 1.8; fill: none; stroke-linecap: round; }
+  .figarrow.acc { stroke: var(--accent); stroke-width: 2.2; }
+  .figarrow.dgr { stroke: var(--danger); stroke-width: 2.4; }
+  .figdash { stroke-dasharray: 6 5; }
+  .figdot { fill: var(--accent); }
+  .figdot.ok { fill: var(--ok); }
+  .figdot.warn { fill: var(--danger); }
+  .figline { stroke: var(--hairline-2); stroke-width: 1.4; }
+  .figpkt-up { fill: var(--accent); }
+  .figpkt-down { fill: var(--net); }
+  .figpkt.dgr { fill: var(--danger); }
+  .figtrain-track { fill: none; stroke: var(--hairline-2); }
+  .figtrain { fill: var(--accent); }
+  .figtrain-label { font: 600 8.5px var(--font); fill: var(--ink-3); letter-spacing: 0.14em; }
+  .figtext.xs { font: 600 8.5px var(--font); fill: var(--ink-3); letter-spacing: 0.10em; }
+  .figarrow.bulk { stroke: var(--danger); stroke-width: 3; }
+  .figboundary { stroke: var(--net); stroke-width: 1.4; stroke-dasharray: 5 4; }
+  .figborder { stroke: var(--danger); stroke-width: 1.4; stroke-dasharray: 5 4; }
+  .figpkt.grey { fill: var(--ink-3); }
+  .figdot.net { fill: var(--net); }
+  .minifig { width: 100%; height: auto; display: block; margin: 10px 0 6px; }
+  .slice-acc { fill: var(--accent); opacity: 0.85; }
+  .mini-arc.ok { stroke: var(--ok); fill: var(--ok-tint); }
+  .mini-arc.net { stroke: var(--net); fill: var(--net-tint); }
+  .mini-arc.acc { stroke: var(--accent); fill: var(--accent-tint); }
+  .opbar { fill: var(--accent); }
+  .opbar-big { fill: var(--accent-tint); stroke: var(--accent); stroke-width: 1.5; }
+  @keyframes flowdash { to { stroke-dashoffset: -22; } }
+  .js .slide.active .fig-anim {
+    stroke-dasharray: 7 4;
+    animation: flowdash 1.3s linear infinite;
+    animation-delay: 1.1s;
+  }
+  @keyframes floaty {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  .js .slide.active .fig-node { animation: floaty 3.4s ease-in-out infinite; }
+  .js .slide.active .fig-node:nth-of-type(2n) { animation-delay: 0.6s; }
+  .js .slide.active .fig-node:nth-of-type(3n) { animation-delay: 1.2s; }
+  @keyframes popin {
+    0% { opacity: 0; transform: scale(0.6); }
+    70% { opacity: 1; transform: scale(1.06); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  .js .slide.active .fig-pulse {
+    transform-box: fill-box; transform-origin: center;
+    animation: popin 0.7s var(--ease) backwards;
+  }
+  .js .slide.active .fig-pulse:nth-of-type(2n) { animation-delay: 0.25s; }
+  .js .slide.active .fig-pulse:nth-of-type(3n) { animation-delay: 0.5s; }
+  .js .slide.active .fig-pulse:nth-of-type(4n) { animation-delay: 0.75s; }
+  @media (prefers-reduced-motion: reduce) {
+    .js .slide.active .fig-anim,
+    .js .slide.active .fig-node,
+    .js .slide.active .fig-pulse { animation: none; }
+  }
+
+  /* ---------- interactive quiz checkpoints ---------- */
+  .quiz {
+    margin-top: 16px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-left: 3px solid var(--net);
+    border-radius: var(--radius-s);
+    box-shadow: var(--shadow-soft);
+    padding: 16px 18px 14px;
+    max-width: 1000px;
+  }
+  .quiz-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .quiz-tag {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+    color: var(--net);
+  }
+  .quiz-q { font-size: 15.5px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 10px; max-width: 950px; }
+  .quiz-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .q-card {
+    text-align: left; font-family: var(--font); font-size: 13.5px; line-height: 1.4;
+    color: var(--ink-2);
+    background: var(--surface-2);
+    border: 1px solid var(--hairline);
+    border-radius: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: border-color 0.15s var(--ease), background 0.15s var(--ease), transform 0.15s var(--ease), opacity 0.15s var(--ease);
+  }
+  .q-card:hover { border-color: var(--hairline-2); transform: translateY(-1px); }
+  .q-card:focus-visible { outline: 2px solid var(--net); outline-offset: 2px; }
+  .q-card .opt-key {
+    display: inline-block; width: 20px; height: 20px; line-height: 18px;
+    text-align: center; border-radius: 6px; margin-right: 8px;
+    background: var(--surface); border: 1px solid var(--hairline-2);
+    font-size: 11px; font-weight: 700; color: var(--ink-3);
+  }
+  .q-card.wrong { background: var(--danger-tint); border-color: var(--danger); color: var(--danger); }
+  .q-card.wrong .opt-key { background: var(--danger); border-color: var(--danger); color: #fff; }
+  .q-card.right { background: var(--ok-tint); border-color: var(--ok); color: var(--ok); }
+  .q-card.right .opt-key { background: var(--ok); border-color: var(--ok); color: #fff; }
+  .q-card:disabled { cursor: default; transform: none; }
+  .quiz[data-state="right"] .q-card:disabled:not(.right) { opacity: 0.6; }
+  .quiz[data-state="answer"] .q-card:disabled:not(.right) { opacity: 0.5; }
+  .quiz-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .pill {
+    font-family: var(--font); font-size: 12px; font-weight: 600;
+    color: var(--net);
+    background: var(--surface);
+    border: 1px solid rgba(0,102,204,0.35);
+    border-radius: 999px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: background 0.15s var(--ease), transform 0.15s var(--ease);
+  }
+  .pill:hover { background: var(--net-tint); transform: translateY(-1px); }
+  .pill:focus-visible { outline: 2px solid var(--net); outline-offset: 2px; }
+  .quiz-fb { margin-top: 10px; font-size: 13.5px; min-height: 1.2em; color: var(--ink-3); }
+  .quiz-fb.wrong { color: var(--danger); }
+  .quiz-fb.right { color: var(--ok); }
+  .quiz-fb.answer { color: var(--net); }
+  .q-explain {
+    margin-top: 10px; font-size: 13.5px; line-height: 1.5; color: var(--ink-2);
+    background: var(--surface-2);
+    border: 1px solid var(--hairline);
+    border-radius: 10px;
+    padding: 10px 14px;
+  }
+  .q-explain b { color: var(--ink); }
+  .js .q-explain { animation: rise 420ms var(--ease) backwards; }
+
+  .corner {
+    position: absolute; bottom: -46px; left: 0; right: 0;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 10px; letter-spacing: 0.12em; color: var(--ink-3);
+    opacity: 0.6; padding: 0 2px;
+  }
+
+  /* ---------- nav buttons ---------- */
+  .nav-btn {
+    position: fixed; bottom: 22px; z-index: 50;
+    width: 42px; height: 42px; border-radius: 50%;
+    border: 1px solid var(--hairline);
+    background: var(--surface);
+    box-shadow: var(--shadow-lift);
+    color: var(--ink-2);
+    font-size: 17px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.15s var(--ease), opacity 0.15s var(--ease);
+    -webkit-appearance: none;
+  }
+  .nav-btn:hover { transform: scale(1.06); }
+  .nav-btn:active { transform: scale(0.96); }
+  .nav-btn[disabled] { opacity: 0.3; cursor: default; transform: none; }
+  .nav-prev { right: 74px; }
+  .nav-next { right: 22px; }
+
+  .hint {
+    position: fixed; bottom: 30px; left: 24px; z-index: 50;
+    font-size: 11.5px; color: var(--ink-3);
+    background: var(--surface); border: 1px solid var(--hairline);
+    border-radius: 999px; padding: 7px 13px;
+    box-shadow: var(--shadow-soft);
+    transition: opacity 0.4s var(--ease);
+  }
+  .hint code { font-family: var(--font-mono); font-size: 10.5px; }
+
+  /* ---------- reduced motion ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .js .slide.enter { animation: none; }
+    .js .slide.active .slide-inner > *,
+    .js .slide.active .grid > *,
+    .js .slide.active .flow > * { animation: none; }
+    .js .slide.active .arrow .pkt { animation: none; opacity: 0; }
+    .js .q-explain { animation: none; }
+    .card, .node, .toolbar, .nav-btn, .hint { transition: none; }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .toolbar { background: var(--bg); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 900px) {
+    .grid, .grid.three { grid-template-columns: 1fr; }
+    .quiz-opts { grid-template-columns: 1fr; }
+    .slide-inner { padding: 84px 18px 56px; }
+    .arrow { display: none; }
+    .hint { display: none; }
+    .corner { position: static; margin-top: 20px; }
+  }
+
+  /* ---------- print: one slide per page, all visible ---------- */
+  @media print {
+    :root {
+      --bg: #fff; --surface: #fff; --surface-2: #f6f6f8;
+      --ink: #000; --ink-2: #333; --ink-3: #666;
+      --hairline: #bbb; --shadow-soft: none; --shadow-lift: none;
+    }
+    body { background: #fff; }
+    .toolbar, .progress, .nav-btn, .hint { display: none !important; }
+    .js .slide, .slide {
+      display: flex !important;
+      min-height: auto; overflow: visible;
+      page-break-after: always; break-after: page;
+    }
+    .js .slide.enter { animation: none; }
+    .js .slide.active .slide-inner > *,
+    .js .slide.active .grid > *,
+    .js .slide.active .flow > * { animation: none !important; opacity: 1; transform: none; }
+    .arrow .pkt { display: none; }
+    .quiz-actions, .quiz-fb { display: none !important; }
+    .q-explain { display: block !important; }
+    .slide-inner { padding: 32px 40px; }
+    .corner { position: static; margin-top: 24px; }
+  }
+</style>
+<style id="__web-inspector-hide-shortcut-style__">
+.__web-inspector-hide-shortcut__, .__web-inspector-hide-shortcut__ *
+{
+    visibility: hidden !important;
+}
+</style></head>
+<body>
+
+<div class="progress" id="progress" style="transform: scaleX(1);"></div>
+<div class="toolbar" id="toolbar">
+  <div class="toolbar-brand">Federated Learning <span class="tb-sep">·</span> Cybersecurity &amp; Privacy — Level 4 · V3</div>
+  <div class="toolbar-section" id="sectionLabel">Final check</div>
+  <div class="toolbar-count" id="slideCount">18 / 18</div>
+</div>
+
+<main id="deck">
+  <!-- 01 · TITLE -->
+  <section class="slide slide-title" id="s01" data-section="Welcome">
+    <div class="slide-inner">
+      <div class="kicker">Cybersecurity · Privacy-preserving AI</div>
+      <h1>Federated<br><span class="accent">Learning</span></h1>
+      <p class="lead">A way for organisations to train an AI model together without sending all their private data to one place.</p>
+      <div class="flow" style="max-width:850px;">
+        <div class="node"><strong>LOCAL DATA</strong><span>Stays with its owner</span></div><div class="arrow">→<span class="pkt"></span></div>
+        <div class="node"><strong>LOCAL TRAINING</strong><span>Compute near the data</span></div><div class="arrow">→<span class="pkt"></span></div>
+        <div class="node"><strong>MODEL UPDATES</strong><span>Shared for aggregation</span></div>
+      </div>
+      <div class="small">Level 4 · Simplified edition — centralised vs federated, and the cybersecurity cases</div>
+      <div class="corner"><span>FEDERATED LEARNING / SECURITY &amp; PRIVACY</span></div>
+    </div>
+  </section>
+
+<section class="slide" id="s02" data-section="The problem">
+    <div class="slide-inner">
+      <div class="kicker">01 / The problem</div>
+      <h2>Security teams can learn from each other, but they cannot always share private data.</h2>
+      <div class="grid">
+        <div class="card"><div class="tag">Traditional approach</div><h3>Centralise the data</h3><p>Collect logs, transactions, endpoint telemetry or user records in one place, then train a model centrally.</p><p class="pink"><b>Risk:</b> a high-value data lake, larger breach impact, access-control complexity and regulatory exposure.</p></div>
+        <div class="card"><div class="tag">Federated approach</div><h3>Move the learning to the data</h3><p>Each organisation or device trains locally. It sends model updates rather than its raw training records.</p><p class="lime"><b>Potential benefit:</b> less raw-data movement and more opportunities for cross-silo collaboration.</p></div>
+      </div>
+      <div class="note">Federated learning can reduce data sharing, but it does not automatically keep information secret or meet every privacy law.</div>
+      <div class="corner"><span>THE DATA-SHARING DILEMMA</span></div>
+    </div>
+  </section>
+  <!-- 03 · CENTRALISED VS FEDERATED -->
+  <section class="slide" id="s03" data-section="Centralised vs federated">
+    <div class="slide-inner">
+      <div class="kicker">02 / Centralised vs federated</div>
+      <h2>Two ways to build one shared model</h2>
+      <div class="grid">
+        <div class="card"><div class="tag">Centralised</div><h3>Data travels to the model</h3><p>Logs, transactions, endpoint telemetry and user records are collected in one place, then a model is trained centrally.</p><p class="pink"><b>One high-value target:</b> a single breach exposes everything, with maximum regulatory and access-control exposure.</p></div>
+        <div class="card"><div class="tag">Federated</div><h3>The model travels to the data</h3><p>Each organisation trains locally on its own data and sends only model updates to the coordinator.</p><p class="lime"><b>Boundary stays closed:</b> raw data never crosses organisational lines, so collaboration becomes possible across silos.</p></div>
+      </div>
+      <div class="note"><b>Core trade-off:</b> centralisation buys simplicity and one clear owner; federation buys data locality and cross-organisational collaboration — but the model updates themselves are new artefacts that must be protected.</div>
+      <div class="corner"><span>THE CORE TRADE-OFF</span></div>
+    </div>
+  </section>
+
+<section class="slide" id="s04" data-section="How it works">
+    <div class="slide-inner">
+      <div class="kicker">03 / How it works</div>
+      <h2>The data stays where it is. Only learning updates are shared.</h2>
+      <figure class="fig"><svg viewBox="0 0 990 280" role="img" aria-label="Animated federated training loop: the coordinator sends the global model down, clients train locally, and only model updates travel back up">
+        <path class="figarrow" d="M800 200 C 710 250, 200 250, 170 220"></path>
+        <path class="figarrow" d="M800 172 C 710 200, 400 270, 340 210"></path>
+        <path class="figarrow" d="M800 190 C 400 190, 620 208, 400 197"></path>
+        <path class="figarrow acc fig-anim" d="M170 160 C 260 90, 710 120, 800 138"></path>
+        <path class="figarrow acc fig-anim" d="M350 172 C 440 100, 710 120, 800 138"></path>
+        <path class="figarrow acc fig-anim" d="M530 172 C 620 156, 710 120, 800 138"></path>
+        <circle class="figdot" cx="240" cy="168" r="3"></circle>
+        <circle class="figdot" cx="420" cy="168" r="3"></circle>
+        <circle class="figdot __web-inspector-hide-shortcut__" cx="600" cy="168" r="3"></circle>
+        <!-- moving packets: orange updates travel UP, blue model travels DOWN -->
+        <circle class="figpkt-up" r="4.5" opacity="0">
+          <animatemotion dur="2.6s" begin="0s" repeatCount="indefinite" path="M172 160 C 260 90, 710 120, 800 138"></animatemotion>
+          <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.88;1" dur="2.6s" begin="0s" repeatCount="indefinite"></animate>
+        </circle>
+        <circle class="figpkt-up" r="4.5" opacity="0">
+          <animatemotion dur="2.6s" begin="0.85s" repeatCount="indefinite" path="M350 172 C 440 100, 710 120, 800 138"></animatemotion>
+          <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.88;1" dur="2.6s" begin="0.85s" repeatCount="indefinite"></animate>
+        </circle>
+        <circle class="figpkt-up" r="4.5" opacity="0">
+          <animatemotion dur="2.6s" begin="1.7s" repeatCount="indefinite" path="M530 172 C 620 156, 710 120, 800 138"></animatemotion>
+          <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.88;1" dur="2.6s" begin="1.7s" repeatCount="indefinite"></animate>
+        </circle>
+        <circle class="figpkt-down" r="4.5" opacity="0">
+          <animatemotion dur="2.6s" begin="0.45s" repeatCount="indefinite" path="M800 200 C 710 250, 200 250, 170 220"></animatemotion>
+          <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.88;1" dur="2.6s" begin="0.45s" repeatCount="indefinite"></animate>
+        </circle>
+        <circle class="figpkt-down" r="4.5" opacity="0">
+          <animatemotion dur="2.6s" begin="1.3s" repeatCount="indefinite" path="M800 172 C 710 200, 400 270, 340 210"></animatemotion>
+          <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.88;1" dur="2.6s" begin="1.3s" repeatCount="indefinite"></animate>
+        </circle>
+        <circle class="figpkt-down" r="4.5" opacity="0">
+          <animatemotion dur="2.6s" begin="2.15s" repeatCount="indefinite" path="M800 172 C 710 190, 620 208, 544 192"></animatemotion>
+          <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.88;1" dur="2.6s" begin="2.15s" repeatCount="indefinite"></animate>
+        </circle>
+        <!-- coordinator aggregation pulse, once per round -->
+        <circle cx="875" cy="187" r="12" fill="none" stroke="var(--accent)" stroke-width="2" opacity="0">
+          <animate attributeName="r" values="12;46" dur="2.6s" begin="0.8s" repeatCount="indefinite"></animate>
+          <animate attributeName="opacity" values="0.5;0" dur="2.6s" begin="0.8s" repeatCount="indefinite"></animate>
+        </circle>
+        <!-- client nodes with local-training progress bars -->
+        <g class="fig-node">
+          <rect class="figbox" x="30" y="150" width="140" height="74" rx="14"></rect>
+          <text class="figtext" x="100.0" y="176" text-anchor="middle">HOSPITAL</text>
+          <text class="figtext sm" x="100.0" y="192" text-anchor="middle">endpoint + network data</text>
+          <rect class="figtrain-track" x="44" y="200" width="112" height="5" rx="2.5"></rect>
+          <rect class="figtrain" x="44" y="200" width="0" height="5" rx="2.5">
+            <animate attributeName="width" values="0;0;112;112" keyTimes="0;0.42;0.78;1" dur="2.6s" begin="0s" repeatCount="indefinite"></animate>
+          </rect>
+          <text class="figtrain-label" x="100.0" y="218" text-anchor="middle">LOCAL TRAINING</text>
+        </g>
+        <g class="fig-node">
+          <rect class="figbox" x="210" y="150" width="140" height="74" rx="14"></rect>
+          <text class="figtext" x="280.0" y="176" text-anchor="middle">BANK</text>
+          <text class="figtext sm" x="280.0" y="192" text-anchor="middle">transaction records</text>
+          <rect class="figtrain-track" x="224" y="200" width="112" height="5" rx="2.5"></rect>
+          <rect class="figtrain" x="224" y="200" width="0" height="5" rx="2.5">
+            <animate attributeName="width" values="0;0;112;112" keyTimes="0;0.42;0.78;1" dur="2.6s" begin="0.85s" repeatCount="indefinite"></animate>
+          </rect>
+          <text class="figtrain-label" x="280.0" y="218" text-anchor="middle">LOCAL TRAINING</text>
+        </g>
+        <g class="fig-node">
+          <rect class="figbox" x="390" y="150" width="140" height="74" rx="14"></rect>
+          <text class="figtext" x="460.0" y="176" text-anchor="middle">PHONE FLEET</text>
+          <text class="figtext sm" x="460.0" y="192" text-anchor="middle">device telemetry</text>
+          <rect class="figtrain-track" x="404" y="200" width="112" height="5" rx="2.5"></rect>
+          <rect class="figtrain" x="404" y="200" width="0" height="5" rx="2.5">
+            <animate attributeName="width" values="0;0;112;112" keyTimes="0;0.42;0.78;1" dur="2.6s" begin="1.7s" repeatCount="indefinite"></animate>
+          </rect>
+          <text class="figtrain-label" x="460.0" y="218" text-anchor="middle">LOCAL TRAINING</text>
+        </g>
+        <g class="fig-node">
+          <rect class="figbox acc fill-acc" x="800" y="139" width="150" height="96" rx="16"></rect>
+          <text class="figtext" x="875.0" y="174" text-anchor="middle">COORDINATOR</text>
+          <text class="figtext sm" x="875.0" y="194" text-anchor="middle">distributes model</text>
+          <text class="figtext sm" x="875.0" y="212" text-anchor="middle">aggregates updates</text>
+        </g>
+        <text class="figtext sm" x="430" y="108" text-anchor="middle">2. model updates (↑) / 3. trained model (↓)</text>
+        <text class="figtext sm" x="430" y="252" text-anchor="middle">1. global model down &nbsp;·&nbsp; train locally, raw data never leaves</text>
+      </svg><figcaption><b>How it works:</b> watch the round repeat — the global model travels <b>down</b> (blue), each client trains locally (the progress bar under each one), and only the resulting <b>model updates</b> (orange) travel back up to be combined. Raw data never leaves.</figcaption></figure>
+      <div class="flow">
+        <div class="node"><strong>1 · Training organiser</strong><span>Distributes the current global model</span></div><div class="arrow">→<span class="pkt"></span></div>
+        <div class="node"><strong>2 · Participants</strong><span>Train on local records</span></div><div class="arrow">→<span class="pkt"></span></div>
+        <div class="node"><strong>3 · Updates</strong><span>Send parameters or gradients</span></div><div class="arrow">→<span class="pkt"></span></div>
+        <div class="node"><strong>4 · System that combines updates</strong><span>Combines updates into a new model</span></div>
+      </div>
+      <div class="grid three">
+        <div class="card"><h3>Local dataset</h3><p>Never needs to leave the hospital, bank, phone or enterprise network.</p></div>
+        <div class="card"><h3>Local training</h3><p>Each organisation trains the model using the data it already holds.</p></div>
+        <div class="card"><h3>Shared AI model</h3><p>Aggregated knowledge is redistributed for the next training round.</p></div>
+      </div>
+      <div class="small">Conceptual workflow. The training organiser can be one server or a group of connected systems.</div>
+      <div class="corner"><span>THE FEDERATED TRAINING LOOP</span></div>
+    </div>
+  </section>
+  <!-- 05 · SIDE BY SIDE -->
+  <section class="slide" id="s05" data-section="Centralised vs federated">
+    <div class="slide-inner">
+      <div class="kicker">04 / Centralised vs federated</div>
+      <h2>Same goal, different risk profile</h2>
+      <div class="grid">
+        <div class="card"><h3>Data movement</h3><svg class="minifig" viewBox="0 0 380 132" role="img" aria-label="Data movement comparison: on the centralised side, dense streams of raw data flood one big data lake; on the federated side, single compact updates cross a dashed boundary to the coordinator">
+  <line class="figline" x1="162" y1="8" x2="162" y2="118"></line>
+  <!-- centralised lane: bulk raw transfer -->
+  <path class="figarrow bulk" d="M36 26 C 58 26, 74 40, 94 54"></path>
+  <path class="figarrow bulk" d="M36 66 C 58 66, 74 66, 94 66"></path>
+  <path class="figarrow bulk" d="M36 106 C 58 106, 74 92, 94 78"></path>
+  <rect class="figbox" x="8" y="18" width="28" height="16" rx="4"></rect>
+  <rect class="figbox" x="8" y="58" width="28" height="16" rx="4"></rect>
+  <rect class="figbox" x="8" y="98" width="28" height="16" rx="4"></rect>
+  <rect class="figbox bad fill-bad" x="94" y="38" width="54" height="56" rx="8"></rect>
+  <text class="figtext.xs" x="121" y="63" text-anchor="middle">DATA</text>
+  <text class="figtext.xs" x="121" y="75" text-anchor="middle">LAKE</text>
+  <circle class="figdot warn" r="2.8" opacity="0">
+    <animatemotion dur="1.5s" begin="0s" repeatCount="indefinite" path="M36 26 C 58 26, 74 40, 94 54"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.5s" begin="0s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figdot warn" r="2.8" opacity="0">
+    <animatemotion dur="1.5s" begin="0.5s" repeatCount="indefinite" path="M36 26 C 58 26, 74 40, 94 54"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.5s" begin="0.5s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figdot warn" r="2.8" opacity="0">
+    <animatemotion dur="1.5s" begin="1s" repeatCount="indefinite" path="M36 26 C 58 26, 74 40, 94 54"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.5s" begin="1s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figdot warn" r="2.8" opacity="0">
+    <animatemotion dur="1.5s" begin="0s" repeatCount="indefinite" path="M36 66 C 58 66, 74 66, 94 66"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.5s" begin="0s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figdot warn" r="2.8" opacity="0">
+    <animatemotion dur="1.5s" begin="0.5s" repeatCount="indefinite" path="M36 66 C 58 66, 74 66, 94 66"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.5s" begin="0.5s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figdot warn" r="2.8" opacity="0">
+    <animatemotion dur="1.5s" begin="1s" repeatCount="indefinite" path="M36 66 C 58 66, 74 66, 94 66"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.5s" begin="1s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figdot warn" r="2.8" opacity="0">
+    <animatemotion dur="1.5s" begin="0s" repeatCount="indefinite" path="M36 106 C 58 106, 74 92, 94 78"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.5s" begin="0s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figdot warn" r="2.8" opacity="0">
+    <animatemotion dur="1.5s" begin="0.5s" repeatCount="indefinite" path="M36 106 C 58 106, 74 92, 94 78"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.5s" begin="0.5s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figdot warn" r="2.8" opacity="0">
+    <animatemotion dur="1.5s" begin="1s" repeatCount="indefinite" path="M36 106 C 58 106, 74 92, 94 78"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.5s" begin="1s" repeatCount="indefinite"></animate>
+  </circle>
+  <text class="figtext.xs" x="76" y="130" text-anchor="middle">BULK RAW DATA</text>
+  <!-- federated lane: compact updates across a closed boundary -->
+  <line class="figboundary" x1="244" y1="8" x2="244" y2="118"></line>
+  <text class="figtext.xs" transform="translate(237 63) rotate(-90)" text-anchor="middle">BOUNDARY</text>
+  <path class="figarrow acc" d="M196 26 C 218 26, 238 40, 254 54"></path>
+  <path class="figarrow acc" d="M196 66 C 218 66, 238 66, 254 66"></path>
+  <path class="figarrow acc" d="M196 106 C 218 106, 238 92, 254 78"></path>
+  <rect class="figbox" x="168" y="18" width="28" height="16" rx="4"></rect>
+  <rect class="figbox" x="168" y="58" width="28" height="16" rx="4"></rect>
+  <rect class="figbox" x="168" y="98" width="28" height="16" rx="4"></rect>
+  <rect class="figbox acc fill-acc" x="254" y="38" width="116" height="56" rx="8"></rect>
+  <text class="figtext.xs" x="312" y="68" text-anchor="middle">COORDINATOR</text>
+  <circle class="figpkt-up" r="3" opacity="0">
+    <animatemotion dur="2.4s" begin="0s" repeatCount="indefinite" path="M196 26 C 218 26, 238 40, 254 54"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="2.4s" begin="0s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figpkt-up" r="3" opacity="0">
+    <animatemotion dur="2.4s" begin="0.8s" repeatCount="indefinite" path="M196 66 C 218 66, 238 66, 254 66"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="2.4s" begin="0.8s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figpkt-up" r="3" opacity="0">
+    <animatemotion dur="2.4s" begin="1.6s" repeatCount="indefinite" path="M196 106 C 218 106, 238 92, 254 78"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="2.4s" begin="1.6s" repeatCount="indefinite"></animate>
+  </circle>
+  <text class="figtext.xs" x="269" y="130" text-anchor="middle">COMPACT UPDATES</text>
+</svg><p><b>Centralised:</b> bulk transfer of raw logs and records into one lake.<br><b>Federated:</b> only compact model updates cross the boundary.</p></div>
+        <div class="card"><h3>Breach impact</h3><svg class="minifig" viewBox="0 0 380 132" role="img" aria-label="Breach impact: on the centralised side, one breach of the data lake sends an expanding blast ring; on the federated side, each organisation only flickers locally">
+  <line class="figline" x1="162" y1="8" x2="162" y2="118"></line>
+  <!-- centralised lane: one big target -->
+  <rect class="figbox bad fill-bad" x="88" y="38" width="60" height="56" rx="8"></rect>
+  <text class="figtext.xs" x="118" y="62" text-anchor="middle">DATA</text>
+  <text class="figtext.xs" x="118" y="74" text-anchor="middle">LAKE</text>
+  <circle class="figdot warn" r="3" opacity="0">
+    <animatemotion dur="2.2s" begin="0s" repeatCount="indefinite" path="M8 66 L 88 66"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="2.2s" begin="0s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle cx="118" cy="66" r="12" fill="none" stroke="var(--danger)" stroke-width="2" opacity="0">
+    <animate attributeName="r" values="12;54" dur="2.2s" begin="2.15s" repeatCount="indefinite"></animate>
+    <animate attributeName="opacity" values="0.55;0" dur="2.2s" begin="2.15s" repeatCount="indefinite"></animate>
+  </circle>
+  <text class="figtext.xs" x="76" y="112" text-anchor="middle">ONE BREACH,</text>
+  <text class="figtext.xs" x="76" y="130" text-anchor="middle">ALL DATA</text>
+  <!-- federated lane: blast stays local -->
+  <rect class="figbox" x="176" y="56" width="44" height="20" rx="5"></rect>
+  <text class="figtext.xs" x="198" y="69" text-anchor="middle">ORG</text>
+  <rect class="figbox" x="248" y="56" width="44" height="20" rx="5"></rect>
+  <text class="figtext.xs" x="270" y="69" text-anchor="middle">ORG</text>
+  <rect class="figbox" x="320" y="56" width="44" height="20" rx="5"></rect>
+  <text class="figtext.xs" x="342" y="69" text-anchor="middle">ORG</text>
+  <circle cx="198" cy="66" r="10" fill="none" stroke="var(--ink-3)" stroke-width="1.5" opacity="0">
+    <animate attributeName="r" values="10;19" dur="2.6s" begin="0s" repeatCount="indefinite"></animate>
+    <animate attributeName="opacity" values="0.45;0" dur="2.6s" begin="0s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle cx="270" cy="66" r="10" fill="none" stroke="var(--ink-3)" stroke-width="1.5" opacity="0">
+    <animate attributeName="r" values="10;19" dur="2.6s" begin="0.9s" repeatCount="indefinite"></animate>
+    <animate attributeName="opacity" values="0.45;0" dur="2.6s" begin="0.9s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle cx="342" cy="66" r="10" fill="none" stroke="var(--ink-3)" stroke-width="1.5" opacity="0">
+    <animate attributeName="r" values="10;19" dur="2.6s" begin="1.8s" repeatCount="indefinite"></animate>
+    <animate attributeName="opacity" values="0.45;0" dur="2.6s" begin="1.8s" repeatCount="indefinite"></animate>
+  </circle>
+  <text class="figtext.xs" x="268" y="128" text-anchor="middle">EACH BREACH STAYS LOCAL</text>
+</svg><p><b>Centralised:</b> one lake is one large target — maximum blast radius.<br><b>Federated:</b> each organisation's data stays local; the coordinator holds aggregates, not source records.</p></div>
+        <div class="card"><h3>Regulatory exposure</h3><svg class="minifig" viewBox="0 0 380 132" role="img" aria-label="Regulatory exposure: on the centralised side, red record dots stream across a dashed border into a central store; on the federated side, only orange update dots cross the border to the coordinator">
+  <line class="figline" x1="162" y1="8" x2="162" y2="118"></line>
+  <!-- centralised lane: raw records cross the border -->
+  <rect class="figbox" x="8" y="18" width="28" height="16" rx="4"></rect>
+  <rect class="figbox" x="8" y="58" width="28" height="16" rx="4"></rect>
+  <rect class="figbox" x="8" y="98" width="28" height="16" rx="4"></rect>
+  <path class="figarrow dgr" d="M36 26 C 60 26, 92 44, 95 50"></path>
+  <path class="figarrow dgr" d="M36 66 C 60 66, 92 66, 95 66"></path>
+  <path class="figarrow dgr" d="M36 106 C 60 106, 92 92, 95 78"></path>
+  <line class="figborder" x1="95" y1="8" x2="95" y2="104"></line>
+  <text class="figtext.xs" transform="translate(90 63) rotate(-90)" text-anchor="middle">BORDER</text>
+  <rect class="figbox bad fill-bad" x="97" y="38" width="70" height="56" rx="8"></rect>
+  <text class="figtext.xs" x="130" y="63" text-anchor="middle">CENTRAL</text>
+  <text class="figtext.xs" x="130" y="81" text-anchor="middle">STORE</text>
+  <circle class="figdot warn" r="2.5" opacity="0">
+    <animatemotion dur="1.5s" begin="0s" repeatCount="indefinite" path="M36 26 C 60 26, 92 44, 95 54"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.5s" begin="0s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figdot warn" r="2.5" opacity="0">
+    <animatemotion dur="1.5s" begin="0.5s" repeatCount="indefinite" path="M36 26 C 60 26, 92 44, 95 54"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.5s" begin="0.5s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figdot warn" r="2.5" opacity="0">
+    <animatemotion dur="1.5s" begin="1s" repeatCount="indefinite" path="M36 26 C 60 26, 92 44, 95 54"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.5s" begin="1s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figdot warn" r="2.5" opacity="0">
+    <animatemotion dur="1.5s" begin="0.2s" repeatCount="indefinite" path="M36 66 C 60 66, 92 66, 95 66"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.5s" begin="0.2s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figdot warn" r="2.5" opacity="0">
+    <animatemotion dur="1.5s" begin="0.7s" repeatCount="indefinite" path="M36 66 C 60 66, 92 66, 95 66"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.5s" begin="0.7s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figdot warn" r="2.5" opacity="0">
+    <animatemotion dur="1.5s" begin="1.2s" repeatCount="indefinite" path="M36 66 C 60 66, 92 66, 95 66"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.5s" begin="1.2s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figdot warn" r="2.5" opacity="0">
+    <animatemotion dur="1.5s" begin="0.4s" repeatCount="indefinite" path="M36 106 C 60 106, 92 92, 95 78"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.5s" begin="0.4s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figdot warn" r="2.5" opacity="0">
+    <animatemotion dur="1.5s" begin="0.9s" repeatCount="indefinite" path="M36 106 C 60 106, 92 92, 95 78"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.5s" begin="0.9s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figdot warn" r="2.5" opacity="0">
+    <animatemotion dur="1.5s" begin="1.4s" repeatCount="indefinite" path="M36 106 C 60 106, 92 92, 95 78"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.5s" begin="1.4s" repeatCount="indefinite"></animate>
+  </circle>
+  <text class="figtext.xs" x="76" y="130" text-anchor="middle">DATA-PROTECTION</text>
+  
+  <!-- federated lane: only updates cross -->
+  <rect class="figbox" x="168" y="18" width="28" height="16" rx="4"></rect>
+  <rect class="figbox" x="168" y="58" width="28" height="16" rx="4"></rect>
+  <rect class="figbox" x="168" y="98" width="28" height="16" rx="4"></rect>
+  <path class="figarrow acc" d="M196 26 C 218 26, 238 40, 254 54"></path>
+  <path class="figarrow acc" d="M196 66 C 218 66, 238 66, 254 66"></path>
+  <path class="figarrow acc" d="M196 106 C 218 106, 238 92, 254 78"></path>
+  <line class="figboundary" x1="244" y1="8" x2="244" y2="118"></line>
+  <text class="figtext.xs" transform="translate(237 63) rotate(-90)" text-anchor="middle">BORDER</text>
+  <rect class="figbox acc fill-acc" x="254" y="38" width="116" height="56" rx="8"></rect>
+  <text class="figtext.xs" x="312" y="68" text-anchor="middle">COORDINATOR</text>
+  <circle class="figpkt-up" r="3" opacity="0">
+    <animatemotion dur="2.4s" begin="0s" repeatCount="indefinite" path="M196 26 C 218 26, 238 40, 254 54"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="2.4s" begin="0s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figpkt-up" r="3" opacity="0">
+    <animatemotion dur="2.4s" begin="0.8s" repeatCount="indefinite" path="M196 66 C 218 66, 238 66, 254 66"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="2.4s" begin="0.8s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figpkt-up" r="3" opacity="0">
+    <animatemotion dur="2.4s" begin="1.6s" repeatCount="indefinite" path="M196 106 C 218 106, 238 92, 254 78"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="2.4s" begin="1.6s" repeatCount="indefinite"></animate>
+  </circle>
+  <text class="figtext.xs" x="270" y="130" text-anchor="middle">RESIDENCY PRESERVED</text>
+</svg><p><b>Centralised:</b> cross-border or cross-silo transfers trigger data-protection review.<br><b>Federated:</b> data residency is easier to preserve when records do not leave.</p></div>
+        <div class="card"><h3>Trust model</h3><svg class="minifig" viewBox="0 0 380 132" role="img" aria-label="Trust model: on the centralised side, trust flows from every organisation into a single central owner; on the federated side, each organisation only has to trust the coordinator and its aggregation controls">
+  <line class="figline" x1="162" y1="8" x2="162" y2="118"></line>
+  <!-- centralised lane: everyone trusts one -->
+  <rect class="figbox" x="8" y="18" width="28" height="16" rx="4"></rect>
+  <rect class="figbox" x="8" y="58" width="28" height="16" rx="4"></rect>
+  <rect class="figbox" x="8" y="98" width="28" height="16" rx="4"></rect>
+  <path class="figarrow" d="M36 26 C 60 26, 72 44, 88 54"></path>
+  <path class="figarrow" d="M36 66 C 60 66, 72 66, 88 66"></path>
+  <path class="figarrow" d="M36 106 C 60 106, 72 92, 88 78"></path>
+  <rect class="figbox" x="83" y="38" width="70" height="56" rx="8"></rect>
+  <text class="figtext.xs" x="118" y="62" text-anchor="middle">CENTRAL</text>
+  <text class="figtext.xs" x="118" y="78" text-anchor="middle">OWNER</text>
+  <circle class="figpkt grey" r="2.5" opacity="0">
+    <animatemotion dur="1.8s" begin="0s" repeatCount="indefinite" path="M36 26 C 60 26, 72 44, 88 54"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.8s" begin="0s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figpkt grey" r="2.5" opacity="0">
+    <animatemotion dur="1.8s" begin="0.9s" repeatCount="indefinite" path="M36 26 C 60 26, 72 44, 88 54"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.8s" begin="0.9s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figpkt grey" r="2.5" opacity="0">
+    <animatemotion dur="1.8s" begin="0.4s" repeatCount="indefinite" path="M36 66 C 60 66, 72 66, 88 66"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.8s" begin="0.4s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figpkt grey" r="2.5" opacity="0">
+    <animatemotion dur="1.8s" begin="1.3s" repeatCount="indefinite" path="M36 66 C 60 66, 72 66, 88 66"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.8s" begin="1.3s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figpkt grey" r="2.5" opacity="0">
+    <animatemotion dur="1.8s" begin="0.7s" repeatCount="indefinite" path="M36 106 C 60 106, 72 92, 88 78"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.8s" begin="0.7s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figpkt grey" r="2.5" opacity="0">
+    <animatemotion dur="1.8s" begin="1.6s" repeatCount="indefinite" path="M36 106 C 60 106, 72 92, 88 78"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1.8s" begin="1.6s" repeatCount="indefinite"></animate>
+  </circle>
+  <text class="figtext.xs" x="90" y="116" text-anchor="middle">EVERYONE</text>
+  <text class="figtext.xs" x="90" y="130" text-anchor="middle">TRUSTS ONE</text>
+  <!-- federated lane: trust the coordinator + controls -->
+  <rect class="figbox" x="168" y="18" width="28" height="16" rx="4"></rect>
+  <rect class="figbox" x="168" y="58" width="28" height="16" rx="4"></rect>
+  <rect class="figbox" x="168" y="98" width="28" height="16" rx="4"></rect>
+  <path class="figarrow acc" d="M196 26 C 218 26, 238 40, 254 54"></path>
+  <path class="figarrow acc" d="M196 66 C 218 66, 238 66, 254 66"></path>
+  <path class="figarrow acc" d="M196 106 C 218 106, 238 92, 254 78"></path>
+  <rect class="figbox acc fill-acc" x="254" y="38" width="116" height="56" rx="8"></rect>
+  <text class="figtext.xs" x="312" y="56" text-anchor="middle">COORDINATOR</text>
+  <text class="figtext.xs" x="312" y="70" text-anchor="middle">AGGREGATION</text>
+  <text class="figtext.xs" x="312" y="84" text-anchor="middle">CONTROLS</text>
+  <circle class="figpkt-up" r="3" opacity="0">
+    <animatemotion dur="2.4s" begin="0s" repeatCount="indefinite" path="M196 26 C 218 26, 238 40, 254 54"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="2.4s" begin="0s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figpkt-up" r="3" opacity="0">
+    <animatemotion dur="2.4s" begin="0.8s" repeatCount="indefinite" path="M196 66 C 218 66, 238 66, 254 66"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="2.4s" begin="0.8s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figpkt-up" r="3" opacity="0">
+    <animatemotion dur="2.4s" begin="1.6s" repeatCount="indefinite" path="M196 106 C 218 106, 238 92, 254 78"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="2.4s" begin="1.6s" repeatCount="indefinite"></animate>
+  </circle>
+  <text class="figtext.xs" x="270" y="128" text-anchor="middle">TWO THINGS TO TRUST</text>
+</svg><p><b>Centralised:</b> everyone trusts the central owner and its controls.<br><b>Federated:</b> participants must trust the coordinator plus the aggregation and privacy controls.</p></div>
+        <div class="card"><h3>Coverage</h3><svg class="minifig" viewBox="0 0 380 132" role="img" aria-label="Coverage: on the centralised side, one organisation sees only a single slice of the picture; on the federated side, three different views merge into one full picture">
+  <line class="figline" x1="162" y1="8" x2="162" y2="118"></line>
+  <!-- centralised lane: one slice -->
+  <circle cx="56" cy="58" r="26" class="figbox"></circle>
+  <path class="slice-acc" d="M56 58 L56 32 A26 26 0 0 1 82 58 Z"></path>
+  <line class="figline" x1="56" y1="84" x2="56" y2="102"></line>
+  <rect class="figbox" x="40" y="102" width="32" height="14" rx="4"></rect>
+  <text class="figtext.xs" x="56" y="112" text-anchor="middle">ORG</text>
+  <text class="figtext.xs" x="76" y="128" text-anchor="middle">ONE ORG, ONE SLICE</text>
+  <!-- federated lane: three views merge -->
+  <circle cx="206" cy="48" r="12" class="figbox mini-arc ok"></circle>
+  <circle cx="244" cy="48" r="12" class="figbox mini-arc net"></circle>
+  <circle cx="282" cy="48" r="12" class="figbox mini-arc acc"></circle>
+  <path class="figarrow" d="M206 60 C 240 76, 290 76, 308 76"></path>
+  <path class="figarrow" d="M244 60 C 270 68, 290 72, 308 76"></path>
+  <path class="figarrow" d="M282 60 C 300 66, 300 72, 308 76"></path>
+  <circle cx="330" cy="76" r="22" class="figbox acc fill-acc">
+    <animate attributeName="r" values="22;25;22" dur="2.4s" begin="0.8s" repeatCount="indefinite"></animate>
+  </circle>
+  <text class="figtext.xs" x="330" y="80" text-anchor="middle">ALL</text>
+  <circle class="figdot ok" r="3" opacity="0">
+    <animatemotion dur="2.4s" begin="0s" repeatCount="indefinite" path="M206 60 C 240 76, 290 76, 308 76"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="2.4s" begin="0s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figdot net" r="3" opacity="0">
+    <animatemotion dur="2.4s" begin="0.8s" repeatCount="indefinite" path="M244 60 C 270 68, 290 72, 308 76"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="2.4s" begin="0.8s" repeatCount="indefinite"></animate>
+  </circle>
+  <circle class="figpkt-up" r="3" opacity="0">
+    <animatemotion dur="2.4s" begin="1.6s" repeatCount="indefinite" path="M282 60 C 300 66, 300 72, 308 76"></animatemotion>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="2.4s" begin="1.6s" repeatCount="indefinite"></animate>
+  </circle>
+  <text class="figtext.xs" x="270" y="128" text-anchor="middle">FULL PICTURE TOGETHER</text>
+</svg><p><b>Centralised:</b> as good as the data that managed to arrive.<br><b>Federated:</b> the model learns from populations no single organisation can see alone.</p></div>
+        <div class="card"><h3>Operations</h3><svg class="minifig" viewBox="0 0 380 132" role="img" aria-label="Operations: on the centralised side, one large one-off transfer block appears on the timeline; on the federated side, five small round bars light up in sequence, repeating">
+  <line class="figline" x1="162" y1="8" x2="162" y2="118"></line>
+  <!-- centralised lane: one big transfer -->
+  <line class="figline" x1="16" y1="70" x2="148" y2="70"></line>
+  <text class="figtext.xs" x="72" y="48" text-anchor="middle">ONE-OFF</text>
+  <rect class="opbar-big" x="56" y="54" width="32" height="32" rx="4" opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.8;1" dur="2.4s" begin="0s" repeatCount="indefinite"></animate>
+  </rect>
+  <text class="figtext.xs" x="82" y="128" text-anchor="middle">ONE FAT TRANSFER</text>
+  <!-- federated lane: many small rounds -->
+  <line class="figline" x1="184" y1="70" x2="364" y2="70"></line>
+  <text class="figtext.xs" x="274" y="56" text-anchor="middle">ROUNDS</text>
+  <rect class="opbar" x="196" y="64" width="10" height="12" rx="2" opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.85;1" dur="2.4s" begin="0s" repeatCount="indefinite"></animate>
+  </rect>
+  <rect class="opbar" x="232" y="64" width="10" height="12" rx="2" opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.85;1" dur="2.4s" begin="0.45s" repeatCount="indefinite"></animate>
+  </rect>
+  <rect class="opbar" x="268" y="64" width="10" height="12" rx="2" opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.85;1" dur="2.4s" begin="0.9s" repeatCount="indefinite"></animate>
+  </rect>
+  <rect class="opbar" x="304" y="64" width="10" height="12" rx="2" opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.85;1" dur="2.4s" begin="1.35s" repeatCount="indefinite"></animate>
+  </rect>
+  <rect class="opbar" x="340" y="64" width="10" height="12" rx="2" opacity="0">
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.85;1" dur="2.4s" begin="1.8s" repeatCount="indefinite"></animate>
+  </rect>
+  <text class="figtext.xs" x="274" y="128" text-anchor="middle">MANY SMALL ROUNDS</text>
+</svg><p><b>Centralised:</b> storage and bandwidth for large one-off transfers.<br><b>Federated:</b> repeated rounds of smaller updates, and a coordinator that must itself be protected.</p></div>
+      </div>
+      <div class="note">Neither is universally better — the right design depends on data sensitivity, the law, and who can be trusted to hold what.</div>
+      <div class="corner"><span>SIDE BY SIDE</span></div>
+    </div>
+  </section>
+
+<section class="slide" id="s06" data-section="Security use cases">
+    <div class="slide-inner">
+      <div class="kicker">05 / Security use cases</div>
+      <h2>Where federated learning can help cybersecurity</h2>
+      <div class="grid">
+        <div class="card"><div class="tag">Threat detection</div><h3>Collaborative anomaly detection</h3><p>Organisations train on local network or endpoint telemetry to improve detection of suspicious behaviour without exchanging raw logs.</p></div>
+        <div class="card"><div class="tag">Fraud prevention</div><h3>Cross-institution fraud models</h3><p>Banks or payment providers learn from different customer populations while limiting direct sharing of transaction histories.</p></div>
+        <div class="card"><div class="tag">Edge / IoT</div><h3>On-device threat intelligence</h3><p>Devices learn patterns of malicious activity locally and contribute updates when connectivity and policy permit.</p></div>
+        <div class="card"><div class="tag">Identity &amp; access</div><h3>Privacy-aware behaviour analytics</h3><p>Participating services can improve risk scoring without building a single repository of all user activity.</p></div>
+      </div>
+      <div class="corner"><span>APPLICATIONS</span></div>
+    </div>
+  </section>
+<section class="slide" id="s07" data-section="Case study">
+    <div class="slide-inner">
+      <div class="kicker">06 / Case study</div>
+      <h2>Case study: collaborative phishing detection across three enterprises.</h2>
+      <p class="lead">Three organisations want a shared classifier for suspicious messages while retaining email content and user identities within their own environments.</p>
+      <div class="grid">
+        <div class="card"><h3>Local preparation</h3><p>Each enterprise extracts approved, minimised features and labels within its own security boundary.</p></div>
+        <div class="card"><h3>Federated rounds</h3><p>An authenticated coordinator distributes a signed model; clients train locally and submit protected updates.</p></div>
+        <div class="card"><h3>Safeguards</h3><p>Protected combining of updates, client-level privacy where justified, clipping, robust validation and strict model access.</p></div>
+        <div class="card"><h3>Operational use</h3><p>A validated model is deployed in monitor-only mode, then gradually integrated into response workflows.</p></div>
+      </div>
+      <div class="note">Do not send raw email content or personal identifiers into the training federation unless explicitly justified, authorised and protected.</div>
+      <div class="corner"><span>FEDERATED LEARNING / CYBERSECURITY &amp; PRIVACY</span></div>
+    </div>
+  </section>
+  <!-- 08 · PRIVACY REALITY CHECK -->
+  <section class="slide" id="s08" data-section="Privacy reality check">
+    <div class="slide-inner">
+      <div class="kicker">07 / Privacy reality check</div>
+      <h2>Even when raw data stays private, shared updates can reveal information.</h2>
+      <div class="grid">
+        <div class="card"><h3 class="pink">Gradient / model inversion</h3><p>An attacker tries to work backwards from the updates to guess private information.</p></div>
+        <div class="card"><h3 class="pink">Checking who was in the training data</h3><p>An attacker tries to find out whether a person's information was used to train the model.</p></div>
+        <div class="card"><h3 class="pink">Guessing facts about a group</h3><p>Updates reveal sensitive characteristics of a participant's dataset, even without recovering exact records.</p></div>
+        <div class="card"><h3 class="pink">Exposure of activity details</h3><p>Participation patterns, timing, device identifiers and update sizes can disclose operational information.</p></div>
+      </div>
+      <div class="note"><b>Privacy threat model:</b> protect not only the dataset, but also updates, identities, metadata, the trained model and the aggregation process.</div>
+      <div class="corner"><span>FEDERATED ≠ AUTOMATICALLY PRIVATE</span></div>
+    </div>
+  </section>
+
+  <!-- 09 · ATTACK SURFACE -->
+  <section class="slide" id="s09" data-section="Attacks">
+    <div class="slide-inner">
+      <div class="kicker">08 / Attacks</div>
+      <h2>The new attack surface</h2>
+      <p class="lead">Federated learning adds participants and a coordinator — each is a potential attacker or breach point.</p>
+      <figure class="fig"><svg viewBox="0 0 990 210" role="img" aria-label="A poisoned client sends corrupted model updates to the coordinator alongside honest updates">
+        <path class="figarrow" d="M170 130 C 260 114, 710 98, 800 116"></path>
+        <path class="figarrow" d="M350 130 C 440 114, 710 98, 800 116"></path>
+        <path class="figarrow" d="M530 130 C 620 114, 710 98, 800 116"></path>
+        <path class="figarrow dgr fig-anim" d="M710 130 C 740 124, 770 120, 800 120"></path>
+        <!-- honest update packets -->
+        <circle class="figdot ok" r="4" opacity="0">
+          <animatemotion dur="2.6s" begin="0.2s" repeatCount="indefinite" path="M170 130 C 260 114, 710 98, 800 116"></animatemotion>
+          <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.88;1" dur="2.6s" begin="0.2s" repeatCount="indefinite"></animate>
+        </circle>
+        <circle class="figdot ok" r="4" opacity="0">
+          <animatemotion dur="2.6s" begin="1.05s" repeatCount="indefinite" path="M350 130 C 440 114, 710 98, 800 116"></animatemotion>
+          <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.88;1" dur="2.6s" begin="1.05s" repeatCount="indefinite"></animate>
+        </circle>
+        <circle class="figdot ok" r="4" opacity="0">
+          <animatemotion dur="2.6s" begin="1.9s" repeatCount="indefinite" path="M530 130 C 620 114, 710 98, 800 116"></animatemotion>
+          <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.88;1" dur="2.6s" begin="1.9s" repeatCount="indefinite"></animate>
+        </circle>
+        <!-- poisoned packet: same road, faster -->
+        <circle class="figpkt dgr" r="5" opacity="0">
+          <animatemotion dur="1.3s" begin="0.5s" repeatCount="indefinite" path="M710 130 C 740 124, 770 120, 800 120"></animatemotion>
+          <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.85;1" dur="1.3s" begin="0.5s" repeatCount="indefinite"></animate>
+        </circle>
+        <circle cx="875" cy="135" r="12" fill="none" stroke="var(--danger)" stroke-width="2" opacity="0">
+          <animate attributeName="r" values="12;42" dur="1.3s" begin="1.05s" repeatCount="indefinite"></animate>
+          <animate attributeName="opacity" values="0.55;0" dur="1.3s" begin="1.05s" repeatCount="indefinite"></animate>
+        </circle>
+        <text class="figtext sm warn" x="755" y="94" text-anchor="middle">poisoned update</text>
+        <g class="fig-node">
+          <rect class="figbox" x="30" y="100" width="140" height="70" rx="14"></rect>
+          <text class="figtext" x="100.0" y="131" text-anchor="middle">FINANCE CO.</text>
+          <text class="figtext sm" x="100.0" y="149" text-anchor="middle">honest updates</text>
+        </g>
+        <g class="fig-node">
+          <rect class="figbox" x="210" y="100" width="140" height="70" rx="14"></rect>
+          <text class="figtext" x="280.0" y="131" text-anchor="middle">RETAIL CO.</text>
+          <text class="figtext sm" x="280.0" y="149" text-anchor="middle">honest updates</text>
+        </g>
+        <g class="fig-node">
+          <rect class="figbox" x="390" y="100" width="140" height="70" rx="14"></rect>
+          <text class="figtext" x="460.0" y="131" text-anchor="middle">SAAS CO.</text>
+          <text class="figtext sm" x="460.0" y="149" text-anchor="middle">honest updates</text>
+        </g>
+        <g class="fig-node">
+          <rect class="figbox bad fill-bad" x="570" y="100" width="140" height="70" rx="14"></rect>
+          <text class="figtext warn" x="640.0" y="131" text-anchor="middle">POISONED CLIENT</text>
+          <text class="figtext sm" x="640.0" y="149" text-anchor="middle">corrupted updates</text>
+        </g>
+        <g class="fig-node">
+          <rect class="figbox" x="800" y="89" width="150" height="92" rx="16"></rect>
+          <text class="figtext" x="875.0" y="124" text-anchor="middle">COORDINATOR</text>
+          <text class="figtext sm" x="875.0" y="144" text-anchor="middle">robust aggregation</text>
+          <text class="figtext sm" x="875.0" y="162" text-anchor="middle">+ client validation</text>
+        </g>
+      </svg><figcaption><b>One bad actor is enough:</b> the poisoned update (red) rides the exact same network as the honest ones — encrypted channels alone cannot tell the difference. Only robust aggregation, clipping and client validation can spot it.</figcaption></figure>
+      <div class="grid">
+        <div class="card"><h3 class="pink">Teaching the model incorrect information</h3><p>A participant changes its training data to teach the model incorrect information.</p></div>
+        <div class="card"><h3 class="pink">Sending harmful model updates</h3><p>A dishonest participant sends changes designed to make the model behave in the wrong way.</p></div>
+        <div class="card"><h3 class="pink">Pretending to be many users</h3><p>An attacker pretends to be many different users so their changes have more influence.</p></div>
+        <div class="card"><h3 class="pink">The training organiser is hacked</h3><p>A malicious or compromised server distributes manipulated models or targets selected clients.</p></div>
+      </div>
+      <div class="note"><b>Integrity threat model:</b> a federation must assume that some participants are wrong, compromised or malicious — and design aggregation accordingly.</div>
+      <div class="corner"><span>THREAT LANDSCAPE</span></div>
+    </div>
+  </section>
+
+  <!-- 10 · DEFENCES -->
+  <section class="slide" id="s10" data-section="Defences">
+    <div class="slide-inner">
+      <div class="kicker">09 / Defences</div>
+      <h2>Layer controls around every round</h2>
+      <div class="grid">
+        <div class="card"><div class="tag">Confidentiality</div><h3>Protected combining of updates</h3><p>Cryptographic protocols let the coordinator learn the combined result without seeing any single organisation's contribution.</p></div>
+        <div class="card"><div class="tag">Formal privacy</div><h3>Differential privacy</h3><p>Updates are clipped and calibrated noise is added, bounding how much the released model can reveal about one person.</p></div>
+        <div class="card"><div class="tag">Integrity</div><h3>Robust aggregation</h3><p>Medians, trimmed means and anomaly scoring limit the effect of poisoned or extreme updates.</p></div>
+        <div class="card"><div class="tag">Lifecycle</div><h3>Participant controls</h3><p>Identity and version checks, validation before acceptance, and the ability to suspend or exclude a client.</p></div>
+      </div>
+      <div class="note"><b>Two different jobs:</b> privacy controls (protected combining, DP) and integrity controls (robust aggregation, vetting) are not substitutes — a real deployment needs both.</div>
+      <div class="corner"><span>DEFEND IN DEPTH</span></div>
+    </div>
+  </section>
+
+  <!-- 11 · DECISION -->
+  <section class="slide" id="s11" data-section="Decision">
+    <div class="slide-inner">
+      <div class="kicker">10 / Decision</div>
+      <h2>When does federated make sense?</h2>
+      <div class="grid">
+        <div class="card"><div class="tag">Choose federated</div><h3>Many organisations, similar data</h3><p>Competitors, banks, hospitals or enterprises that must keep data local but want a shared detection model — e.g. phishing, fraud or endpoint threats.</p><p class="lime"><b>Fits when:</b> strict residency or privacy rules apply, and no single organisation holds the full picture.</p></div>
+        <div class="card"><div class="tag">Stay centralised</div><h3>One owner, one trusted dataset</h3><p>A small group of trusted partners that can lawfully share, or a single authoritative data lake inside one organisation.</p><p class="pink"><b>Prefer central when:</b> the federation would be tiny, trust is high, and a governed central pipeline is simpler to audit.</p></div>
+      </div>
+      <div class="note"><b>Design choice, not default:</b> federated adds coordination complexity. It earns its cost when the data cannot move and the collaboration is worth having.</div>
+      <div class="corner"><span>FIT CHECK</span></div>
+    </div>
+  </section>
+
+<section class="slide" id="s12" data-section="Takeaways">
+    <div class="slide-inner">
+      <div class="kicker">11 / Takeaways</div>
+      <h2>Federated learning is one way to organise AI training. It is not a guarantee of privacy.</h2>
+      <div class="grid">
+        <div class="card"><div class="metric">01</div><h3>Keep data close to its source</h3><p>Reduce central collection and enable collaboration across organisational boundaries.</p></div>
+        <div class="card"><div class="metric">02</div><h3>Protect what leaves the client</h3><p>Changes to the AI model, metadata and the global model all require threat analysis.</p></div>
+        <div class="card"><div class="metric">03</div><h3>Combine privacy with integrity</h3><p>Protected combining of updates and differential privacy must coexist with poisoning detection and governance.</p></div>
+        <div class="card"><div class="metric">04</div><h3>Measure the trade-offs</h3><p>Privacy, accuracy, communication cost, robustness and operational complexity must be evaluated together.</p></div>
+      </div>
+      <p class="lead" style="margin-top:16px; color:var(--ink);">The goal is to build a useful shared model while keeping private information and systems safe.</p>
+      <div class="corner"><span>CONCLUSION</span></div>
+    </div>
+  </section>
+<section class="slide" id="s13" data-section="Final check">
+    <div class="slide-inner">
+      <div class="kicker">12 / Final check · 1 of 6</div>
+      <h2>What crosses the boundary?</h2>
+      <p class="lead">Think back to the centralised vs federated comparison.</p>
+      <div class="quiz" data-quiz="" data-answer="1" data-state="question" data-hint="the data is the thing we're keeping local, so what's left that still has to move?">
+        <div class="quiz-head"><span class="quiz-tag">Quick check — ask the class first</span></div>
+        <p class="quiz-q">In a federated setup, what actually crosses the organisational boundary each round?</p>
+        <div class="quiz-opts">
+          <button class="q-card" type="button"><span class="opt-key">A</span>The raw training data</button>
+          <button class="q-card" type="button"><span class="opt-key">B</span>Model updates (weights or gradients) only</button>
+          <button class="q-card" type="button"><span class="opt-key">C</span>Both the data and the model</button>
+          <button class="q-card" type="button"><span class="opt-key">D</span>Nothing — the clients never talk to each other</button>
+        </div>
+        <div class="quiz-actions">
+          <button class="pill" type="button" data-action="reveal">Show answer</button>
+          <button class="pill" type="button" data-action="reset">Ask again</button>
+        </div>
+        <p class="quiz-fb" aria-live="polite"></p>
+        <div class="q-explain" hidden=""><b>Why:</b> Federation exists precisely so raw records never move: the coordinator sends the model down, clients train locally, and only the learned updates travel back up. If the raw data crossed the boundary, it would just be centralised learning with extra steps — and if nothing moved at all, no shared model could ever be built.</div>
+      </div>
+      <div class="corner"><span>FINAL CHECK · 1 OF 6</span></div>
+    </div>
+  </section>
+<section class="slide" id="s14" data-section="Final check">
+    <div class="slide-inner">
+      <div class="kicker">13 / Final check · 2 of 6</div>
+      <h2>One training round, step by step</h2>
+      <p class="lead">Think back to the animated training loop.</p>
+      <div class="quiz" data-quiz="" data-answer="2" data-state="question" data-hint="think about one round: which way does the global model travel, and which way do the updates travel?">
+        <div class="quiz-head"><span class="quiz-tag">Quick check — ask the class first</span></div>
+        <p class="quiz-q">Which statement about one federated training round is TRUE?</p>
+        <div class="quiz-opts">
+          <button class="q-card" type="button"><span class="opt-key">A</span>The coordinator first downloads all clients' raw data</button>
+          <button class="q-card" type="button"><span class="opt-key">B</span>Clients upload their records so the coordinator can label them</button>
+          <button class="q-card" type="button"><span class="opt-key">C</span>The global model is distributed, each client trains locally, and only the updates are combined</button>
+          <button class="q-card" type="button"><span class="opt-key">D</span>The model is trained once on the server and never changes again</button>
+        </div>
+        <div class="quiz-actions">
+          <button class="pill" type="button" data-action="reveal">Show answer</button>
+          <button class="pill" type="button" data-action="reset">Ask again</button>
+        </div>
+        <p class="quiz-fb" aria-live="polite"></p>
+        <div class="q-explain" hidden=""><b>Why:</b> Every round has three legs: the coordinator distributes the current global model, each participant trains on its own records, and the resulting updates are combined into the new model. The raw data never leaves the client — and the model improves round after round, it isn't built once and frozen.</div>
+      </div>
+      <div class="corner"><span>FINAL CHECK · 2 OF 6</span></div>
+    </div>
+  </section>
+<section class="slide" id="s15" data-section="Final check">
+    <div class="slide-inner">
+      <div class="kicker">14 / Final check · 3 of 6</div>
+      <h2>What does the coordinator actually hold?</h2>
+      <p class="lead">Think back to the side-by-side risk profile.</p>
+      <div class="quiz" data-quiz="" data-answer="1" data-state="question" data-hint="if the coordinator held the raw data, where would the data have ended up in the end?">
+        <div class="quiz-head"><span class="quiz-tag">Quick check — ask the class first</span></div>
+        <p class="quiz-q">In a federated deployment, what does the coordinator actually hold?</p>
+        <div class="quiz-opts">
+          <button class="q-card" type="button"><span class="opt-key">A</span>A copy of every organisation's raw data</button>
+          <button class="q-card" type="button"><span class="opt-key">B</span>The current global model, plus the updates it is currently combining</button>
+          <button class="q-card" type="button"><span class="opt-key">C</span>The login credentials of all participating clients</button>
+          <button class="q-card" type="button"><span class="opt-key">D</span>Nothing at all — it just forwards packets</button>
+        </div>
+        <div class="quiz-actions">
+          <button class="pill" type="button" data-action="reveal">Show answer</button>
+          <button class="pill" type="button" data-action="reset">Ask again</button>
+        </div>
+        <p class="quiz-fb" aria-live="polite"></p>
+        <div class="q-explain" hidden=""><b>Why:</b> The coordinator is stateful: it holds the current global model and processes incoming updates — but it never holds the source records. That distinction is what makes federation a privacy design choice, and it is also why the coordinator is still a high-value attack target.</div>
+      </div>
+      <div class="corner"><span>FINAL CHECK · 3 OF 6</span></div>
+    </div>
+  </section>
+<section class="slide" id="s16" data-section="Final check">
+    <div class="slide-inner">
+      <div class="kicker">15 / Final check · 4 of 6</div>
+      <h2>‘Data never moves’ — but is it private?</h2>
+      <p class="lead">Think back to the privacy reality check.</p>
+      <div class="quiz" data-quiz="" data-answer="1" data-state="question" data-hint="'no raw data moved' is not the same as 'no information moved' — think about what an update is calculated from.">
+        <div class="quiz-head"><span class="quiz-tag">Quick check — ask the class first</span></div>
+        <p class="quiz-q">The raw data never leaves the client. Can private information still leak?</p>
+        <div class="quiz-opts">
+          <button class="q-card" type="button"><span class="opt-key">A</span>No — if the data never moves, nothing can leak</button>
+          <button class="q-card" type="button"><span class="opt-key">B</span>Yes — updates and metadata can reveal information</button>
+          <button class="q-card" type="button"><span class="opt-key">C</span>Only if the final global model is made public</button>
+          <button class="q-card" type="button"><span class="opt-key">D</span>Only during the very first training round</button>
+        </div>
+        <div class="quiz-actions">
+          <button class="pill" type="button" data-action="reveal">Show answer</button>
+          <button class="pill" type="button" data-action="reset">Ask again</button>
+        </div>
+        <p class="quiz-fb" aria-live="polite"></p>
+        <div class="q-explain" hidden=""><b>Why:</b> Updates are calculated <i>from</i> the data, so they carry its fingerprints: inversion attacks reconstruct records, membership queries ask "was this person in the training set?", and participation patterns, timing and update sizes leak operational details. Federation is not automatically private.</div>
+      </div>
+      <div class="corner"><span>FINAL CHECK · 4 OF 6</span></div>
+    </div>
+  </section>
+<section class="slide" id="s17" data-section="Final check">
+    <div class="slide-inner">
+      <div class="kicker">16 / Final check · 5 of 6</div>
+      <h2>Name that attack</h2>
+      <p class="lead">Think back to the poisoned-update figure.</p>
+      <div class="quiz" data-quiz="" data-answer="1" data-state="question" data-hint="is the attacker stealing data out, or corrupting what the model learns?">
+        <div class="quiz-head"><span class="quiz-tag">Quick check — ask the class first</span></div>
+        <p class="quiz-q">A participant quietly sends updates that nudge the model to miss one specific phishing pattern. Which attack is this?</p>
+        <div class="quiz-opts">
+          <button class="q-card" type="button"><span class="opt-key">A</span>Data exfiltration</button>
+          <button class="q-card" type="button"><span class="opt-key">B</span>Model poisoning</button>
+          <button class="q-card" type="button"><span class="opt-key">C</span>Differential privacy</button>
+          <button class="q-card" type="button"><span class="opt-key">D</span>Man-in-the-middle</button>
+        </div>
+        <div class="quiz-actions">
+          <button class="pill" type="button" data-action="reveal">Show answer</button>
+          <button class="pill" type="button" data-action="reset">Ask again</button>
+        </div>
+        <p class="quiz-fb" aria-live="polite"></p>
+        <div class="q-explain" hidden=""><b>Why:</b> This is <b>model poisoning</b>: the participant looks legitimate on the network, but the learning it contributes is corrupted. Exfiltration steals data out; man-in-the-middle intercepts traffic in transit; differential privacy is a <i>defence</i> (calibrated noise), not an attack. Secure channels alone can't catch poisoning — only robust aggregation, clipping and validation can.</div>
+      </div>
+      <div class="corner"><span>FINAL CHECK · 5 OF 6</span></div>
+    </div>
+  </section>
+<section class="slide active enter" id="s18" data-section="Final check">
+    <div class="slide-inner">
+      <div class="kicker">17 / Final check · 6 of 6</div>
+      <h2>Name that defence</h2>
+      <p class="lead">Think back to the controls layered around every round.</p>
+      <div class="quiz" data-quiz="" data-answer="2" data-state="question" data-hint="which of these controls is literally defined by a noise budget?">
+        <div class="quiz-head"><span class="quiz-tag">Quick check — ask the class first</span></div>
+        <p class="quiz-q">Which defence adds calibrated noise to updates before they are aggregated?</p>
+        <div class="quiz-opts">
+          <button class="q-card" type="button"><span class="opt-key">A</span>Protected combining (secure aggregation)</button>
+          <button class="q-card" type="button"><span class="opt-key">B</span>Robust aggregation (medians, trimmed means)</button>
+          <button class="q-card" type="button"><span class="opt-key">C</span>Differential privacy</button>
+          <button class="q-card" type="button"><span class="opt-key">D</span>A stricter firewall</button>
+        </div>
+        <div class="quiz-actions">
+          <button class="pill" type="button" data-action="reveal">Show answer</button>
+          <button class="pill" type="button" data-action="reset">Ask again</button>
+        </div>
+        <p class="quiz-fb" aria-live="polite"></p>
+        <div class="q-explain" hidden=""><b>Why:</b> <b>Differential privacy</b>: each update is clipped, then calibrated noise is added so no single record can change the released model by more than a bounded amount. Secure aggregation hides individual contributions with cryptography (confidentiality); robust aggregation resists extremes and poison (integrity); firewalls block traffic. Different jobs — real deployments need all of them.</div>
+      </div>
+      <div class="corner"><span>FINAL CHECK · 6 OF 6</span></div>
+    </div>
+  </section>
+
+
+
+</main>
+
+<button class="nav-btn nav-prev" id="prevBtn" aria-label="Previous slide">←</button>
+<button class="nav-btn nav-next" id="nextBtn" aria-label="Next slide" disabled="">→</button>
+<div class="hint" id="hint" style="opacity: 0;">Navigate with <code>←</code> <code>→</code> or <code>Space</code></div>
+
+<script>
+(function () {
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.documentElement.classList.add("js");
+  if (reduce) {
+    document.documentElement.style.scrollBehavior = "auto";
+    document.querySelectorAll("svg").forEach(function (s) { if (s.pauseAnimations) s.pauseAnimations(); });
+  }
+
+  var slides = [].slice.call(document.querySelectorAll(".slide"));
+  var total = slides.length;
+  var i = -1;
+  var label = document.getElementById("sectionLabel");
+  var count = document.getElementById("slideCount");
+  var bar = document.getElementById("progress");
+  var prev = document.getElementById("prevBtn");
+  var next = document.getElementById("nextBtn");
+  var hint = document.getElementById("hint");
+  var hintGone = false;
+
+  function show(n, push) {
+    n = Math.max(0, Math.min(total - 1, n));
+    if (n === i) return;
+    if (i >= 0) slides[i].classList.remove("active", "enter");
+    i = n;
+    var s = slides[i];
+    s.classList.add("active");
+    if (!reduce) { void s.offsetWidth; s.classList.add("enter"); }
+    s.scrollTop = 0;
+    label.textContent = s.getAttribute("data-section");
+    count.textContent = (i + 1) + " / " + total;
+    bar.style.transform = "scaleX(" + ((i + 1) / total).toFixed(4) + ")";
+    prev.disabled = i === 0;
+    next.disabled = i === total - 1;
+    if (push !== false) {
+      var h = "#s" + String(i + 1).padStart(2, "0");
+      if (location.hash !== h) history.replaceState(null, "", h);
+    }
+    if (!hintGone && i > 0) { hintGone = true; hint.style.opacity = "0"; }
+    window.scrollTo(0, 0);
+  }
+
+  var m = (location.hash || "").match(/^#s(\d+)$/);
+  var start = m ? parseInt(m[1], 10) - 1 : 0;
+  if (!slides[start]) start = 0;
+
+  // Hard-reset on load: if this file was re-saved mid-session (Save Page As),
+  // the DOM carries baked-in state — an "active" slide, answered quizzes,
+  // progress bar position. Strip all of it so the deck always opens fresh.
+  slides.forEach(function (s) { s.classList.remove("active", "enter"); });
+  [].slice.call(document.querySelectorAll("[data-quiz]")).forEach(function (q) {
+    q.setAttribute("data-state", "question");
+    [].slice.call(q.querySelectorAll(".q-card")).forEach(function (o) {
+      o.classList.remove("wrong", "right"); o.disabled = false;
+    });
+    var fb = q.querySelector(".quiz-fb");
+    if (fb) { fb.className = "quiz-fb"; fb.textContent = ""; }
+    var ex = q.querySelector(".q-explain");
+    if (ex) ex.hidden = true;
+  });
+  if (bar) bar.style.transform = "scaleX(0)";
+
+  show(start, false);
+
+  window.addEventListener("hashchange", function () {
+    var m2 = (location.hash || "").match(/^#s(\d+)$/);
+    if (m2) show(parseInt(m2[1], 10) - 1, false);
+  });
+
+  document.addEventListener("keydown", function (e) {
+    // Space/Enter on a focused control (quiz options, pills, nav buttons) activates that
+    // control instead of flipping slides; arrow keys stay global.
+    var onCtrl = !!(e.target && e.target.closest && e.target.closest("button, a, input, select, textarea"));
+    if (e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === "PageDown" || e.key === " " || e.key === "Enter") {
+      if (onCtrl && (e.key === " " || e.key === "Enter")) return;
+      e.preventDefault(); show(i + 1);
+    } else if (e.key === "ArrowLeft" || e.key === "ArrowUp" || e.key === "PageUp" || e.key === "Backspace") {
+      e.preventDefault(); show(i - 1);
+    } else if (e.key === "Home") { e.preventDefault(); show(0); }
+    else if (e.key === "End") { e.preventDefault(); show(total - 1); }
+  });
+
+  prev.addEventListener("click", function () { show(i - 1); });
+  next.addEventListener("click", function () { show(i + 1); });
+
+  var tx = null;
+  document.addEventListener("touchstart", function (e) { tx = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener("touchend", function (e) {
+    if (tx === null) return;
+    var dx = e.changedTouches[0].clientX - tx; tx = null;
+    if (Math.abs(dx) > 60) show(i + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+
+  /* ---------- interactive quiz checkpoints ---------- */
+  [].slice.call(document.querySelectorAll("[data-quiz]")).forEach(function (q) {
+    var opts = [].slice.call(q.querySelectorAll(".q-card"));
+    var fb = q.querySelector(".quiz-fb");
+    var explain = q.querySelector(".q-explain");
+    var answer = parseInt(q.getAttribute("data-answer"), 10);
+    var hint = q.getAttribute("data-hint") || "try another option, or ask the room.";
+    var letter = function (n) { return String.fromCharCode(65 + n); };
+
+    function clearMarks() {
+      opts.forEach(function (o) { o.classList.remove("wrong", "right"); o.disabled = false; });
+    }
+    function lockAll() {
+      opts.forEach(function (o) { o.disabled = true; });
+    }
+
+    opts.forEach(function (btn, idx) {
+      btn.addEventListener("click", function () {
+        var st = q.getAttribute("data-state");
+        if (st === "right" || st === "answer") return; // accepts question AND wrong (retry)
+        if (idx === answer) {
+          q.setAttribute("data-state", "right");
+          clearMarks();
+          btn.classList.add("right");
+          lockAll();
+          fb.className = "quiz-fb right";
+          fb.textContent = "Correct.";
+          explain.hidden = false;
+        } else {
+          q.setAttribute("data-state", "wrong");
+          opts.forEach(function (o) { o.classList.remove("wrong"); });
+          btn.classList.add("wrong");
+          fb.className = "quiz-fb wrong";
+          fb.textContent = "Not quite — " + hint;
+        }
+      });
+    });
+
+    var reveal = q.querySelector('[data-action="reveal"]');
+    var reset = q.querySelector('[data-action="reset"]');
+    if (reveal) reveal.addEventListener("click", function () {
+      q.setAttribute("data-state", "answer");
+      clearMarks();
+      opts[answer].classList.add("right");
+      lockAll();
+      fb.className = "quiz-fb answer";
+      fb.textContent = "Answer: " + letter(answer) + " — explanation below.";
+      explain.hidden = false;
+      reveal.blur();
+    });
+    if (reset) reset.addEventListener("click", function () {
+      q.setAttribute("data-state", "question");
+      clearMarks();
+      fb.className = "quiz-fb";
+      fb.textContent = "";
+      explain.hidden = true;
+      reset.blur();
+    });
+  });
+})();
+</script>
+
+
+
+</body></html>
